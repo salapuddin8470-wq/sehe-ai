@@ -54,7 +54,7 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     # Kirim pertanyaan ke server Google menggunakan metode versi stabil
     try:
         with st.spinner("SeHe.AI sedang mengarungi lautan data..."):
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-2.5-flash')
             response = model.generate_content(prompt)
             ai_response = response.text
 
