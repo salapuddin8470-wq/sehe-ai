@@ -5,24 +5,23 @@ import os
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
 
-# 2. Desain Tampilan Depan / Header Utama (Menggunakan Ilustrasi Ikan Torani/Taroni)
-# Tautan gambar menggunakan ilustrasi ikan terbang digital yang transparan dan sangat ringan
-url_ikan_terbang = "https://githubusercontent.com" # Contoh ilustrasi, Anda bisa menggantinya nanti jika memiliki aset gambar sendiri
+# 2. Desain Tampilan Depan / Header Utama (Menggunakan Tautan Gambar Stabil)
+# Menggunakan CDN gambar emoji ikan resmi yang diizinkan oleh server Streamlit
+url_ikan_torani = "https://cloudflare.com"
 
-# Mengatur tata letak logo agar gambar ikan mengapit teks SeHe.AI dengan rapi
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col1:
     # Ikan terbang sisi kiri (menghadap ke kanan)
-    st.image("https://wikimedia.org", width=70)
+    st.image(url_ikan_torani, width=50)
 
 with col2:
-    st.markdown("<h1 style='text-align: center; color: #0288d1; margin-top: 10px; margin-bottom: 0;'>SeHe.AI</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #0288d1; margin-top: 0px; margin-bottom: 0; font-size: 32px;'>SeHe.AI</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; font-size: 15px; color: #666; font-weight: bold; margin-top: 0;'>by rikoba</p>", unsafe_allow_html=True)
 
 with col3:
-    # Ikan terbang sisi kanan (efek dibalik menghadap ke kiri menggunakan CSS html)
-    st.markdown("<div style='text-align: right;'><img src='https://wikimedia.org' style='transform: scaleX(-1);' width='70'></div>", unsafe_allow_html=True)
+    # Ikan terbang sisi kanan (efek dibalik menggunakan HTML agar saling berhadapan)
+    st.markdown(f"<div style='text-align: right;'><img src='{url_ikan_torani}' style='transform: scaleX(-1);' width='50'></div>", unsafe_allow_html=True)
 
 st.divider()
 
