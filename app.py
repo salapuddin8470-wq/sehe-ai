@@ -1,5 +1,6 @@
 import streamlit as st
-from google import genai
+import google.generativeai as genai
+import os
 
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
@@ -18,15 +19,21 @@ st.code("""
         `-\\_|/_/
 """, language="text")
 
-st.caption("Aplikasi web AI interaktif bertenaga Google Gemini. Ringan untuk semua spesifikasi laptop.")
+st.caption("Aplikasi web AI interaktif bertenaga Google Gemini.")
 st.divider()
 
-# 3. Masukkan API Key Gemini Anda di sini
-# GANTI teks di dalam tanda kutip dengan API Key yang Anda salin dari Google AI Studio
-GEMINI_API_KEY = "MASUKKAN_API_KEY_GEMINI_ANDA_DI_SINI"
+# 3. Membaca API Key secara aman dari sistem Secrets Streamlit
+if "GEMINI_API_KEY" in st.secrets:
+    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+else:
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
-# Inisialisasi klien resmi Google GenAI
-client = genai.Client(api_key=GEMINI_API_KEY)
+if not GEMINI_API_KEY:
+    st.error("API Key Gemini belum diatur di menu Secrets!")
+    st.stop()
+
+# Inisialisasi API Google Gemini versi stabil
+genai.configure(api_key=GEMINI_API_KEY)
 
 # 4. Wadah untuk menyimpan riwayat percakapan agar SeHe.AI ingat konteks chat
 if "messages" not in st.session_state:
@@ -34,7 +41,6 @@ if "messages" not in st.session_state:
 
 # 5. Menampilkan riwayat chat di layar web
 for message in st.session_state.messages:
-    # Mengubah ikon chat default menjadi lebih ramah sesuai tema nelayan
     avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
     with st.chat_message(message["role"], avatar=avatar_icon):
         st.markdown(message["content"])
@@ -45,22 +51,11 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     st.chat_message("user", avatar="👤").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Kirim pertanyaan beserta seluruh riwayat chat ke server Google
+    # Kirim pertanyaan ke server Google menggunakan metode versi stabil
     try:
         with st.spinner("SeHe.AI sedang mengarungi lautan data..."):
-            # Format riwayat pesan agar sesuai dengan kebutuhan struktur data Google
-            formatted_contents = []
-            for m in st.session_state.messages:
-                role_name = "model" if m["role"] == "assistant" else "user"
-                formatted_contents.append({"role": role_name, "parts": [{"text": m["content"]}]})
-            
-            # Memanggil model Gemini 2.5 Flash terbaru yang sangat cepat dan gratis
-            response = client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=formatted_contents,
-            )
-            
-            # Ambil teks jawaban dari Google
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content(prompt)
             ai_response = response.text
 
         # Tampilkan jawaban AI di layar web dengan avatar ikan
@@ -69,4 +64,4 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
 
     except Exception as e:
-        st.error(f"Terjadi kesalahan: {e}. Pastikan API Key sudah benar dan laptop terhubung ke internet.")
+        st.error(f"Terjadi kesalahan: {e}. Pastikan internet Anda aktif.")
