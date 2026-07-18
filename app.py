@@ -5,23 +5,35 @@ import os
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
 
-# 2. Desain Tampilan Depan / Header Utama (Menggunakan Tautan Gambar Stabil)
-# Menggunakan CDN gambar emoji ikan resmi yang diizinkan oleh server Streamlit
-url_ikan_torani = "https://cloudflare.com"
-
-col1, col2, col3 = st.columns([1, 2, 1])
-
-with col1:
-    # Ikan terbang sisi kiri (menghadap ke kanan)
-    st.image(url_ikan_torani, width=50)
-
-with col2:
-    st.markdown("<h1 style='text-align: center; color: #0288d1; margin-top: 0px; margin-bottom: 0; font-size: 32px;'>SeHe.AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 15px; color: #666; font-weight: bold; margin-top: 0;'>by rikoba</p>", unsafe_allow_html=True)
-
-with col3:
-    # Ikan terbang sisi kanan (efek dibalik menggunakan HTML agar saling berhadapan)
-    st.markdown(f"<div style='text-align: right;'><img src='{url_ikan_torani}' style='transform: scaleX(-1);' width='50'></div>", unsafe_allow_html=True)
+# 2. Desain Tampilan Depan / Header Utama (Desain Kostum Khas Ombak & Ikan Torani)
+# Menggunakan visualisasi grafik vektor (SVG) yang elegan, ringan, dan dijamin pas di layar HP
+st.markdown("""
+<div style="text-align: center; margin-bottom: 20px;">
+    <svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://w3.org" style="display: block; margin: 0 auto;">
+        <!-- Desain Estetik Ombak Bergulung Lautan (Terinspirasi Sketsa) -->
+        <path d="M20 125 C 40 125, 45 105, 55 105 C 65 105, 62 120, 52 122 C 45 123, 40 115, 48 110 C 53 107, 60 112, 58 116" stroke="#0288d1" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M15 130 C 50 130, 70 126, 100 126 C 140 126, 170 131, 205 130" stroke="#0288d1" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M35 135 C 75 135, 95 132, 130 132 C 160 132, 180 136, 200 135" stroke="#0288d1" stroke-width="1.5" stroke-dasharray="4 4" stroke-linecap="round"/>
+        
+        <!-- Desain Siluet Ikan Torani Terbang Meluncur Ke Atas -->
+        <g transform="translate(65, 30) rotate(-12)">
+            <!-- Badan Utama Ikan -->
+            <path d="M10 40 C 25 35, 55 35, 75 52 C 60 55, 30 52, 10 40 Z" fill="#0288d1"/>
+            <!-- Sayap Atas Khas Ikan Terbang (Lebar Mengepak) -->
+            <path d="M42 37 C 45 15, 75 5, 85 8 C 80 15, 65 25, 48 37 Z" fill="#03a9f4" opacity="0.85"/>
+            <!-- Sayap Bawah -->
+            <path d="M45 43 C 50 55, 68 62, 72 60 C 68 55, 58 48, 47 43 Z" fill="#03a9f4" opacity="0.7"/>
+            <!-- Ekor Ikan -->
+            <path d="M10 40 L 0 33 L 3 40 L 0 47 Z" fill="#0288d1"/>
+            <!-- Mata Ikan Kecil Minimalis -->
+            <circle cx="70" cy="46" r="2" fill="white"/>
+        </g>
+    </svg>
+    <!-- Penulisan Nama Aplikasi & Identitas Pembuat -->
+    <h1 style="color: #0288d1; margin-top: -10px; margin-bottom: 0; font-size: 34px; font-weight: bold; letter-spacing: 0.5px;">SeHe.AI</h1>
+    <p style="font-size: 14px; color: #777; font-weight: 600; margin-top: 3px; letter-spacing: 1px;">by rikoba</p>
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
