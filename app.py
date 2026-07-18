@@ -5,21 +5,25 @@ import os
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
 
-# 2. Desain Tampilan Depan / Header Utama (Ciri Khas Daerah Nelayan)
-st.markdown("<h1 style='text-align: center; color: #0288d1;'>🐟 SeHe.AI 🐟</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-style: italic; color: #555;'>\"Asisten Digital Cerdas, Terinspirasi dari Tangguhnya Ikan Terbang Daerah Nelayan\"</p>", unsafe_allow_html=True)
+# 2. Desain Tampilan Depan / Header Utama (Menggunakan Ilustrasi Ikan Torani/Taroni)
+# Tautan gambar menggunakan ilustrasi ikan terbang digital yang transparan dan sangat ringan
+url_ikan_terbang = "https://githubusercontent.com" # Contoh ilustrasi, Anda bisa menggantinya nanti jika memiliki aset gambar sendiri
 
-# Menampilkan Ilustrasi Ikan Terbang Minimalis di Halaman Depan Web
-st.code("""
-         ______
-       _/_/|  _\\_
-   _.-'  / | /   `-._
- <'__   <  |/  _    _>     ===<*)))><  (Ikan Terbang SeHe.AI)
-     `-. \\ | /  _.-'
-        `-\\_|/_/
-""", language="text")
+# Mengatur tata letak logo agar gambar ikan mengapit teks SeHe.AI dengan rapi
+col1, col2, col3 = st.columns([1, 2, 1])
 
-st.caption("Aplikasi web AI interaktif bertenaga Google Gemini.")
+with col1:
+    # Ikan terbang sisi kiri (menghadap ke kanan)
+    st.image("https://wikimedia.org", width=70)
+
+with col2:
+    st.markdown("<h1 style='text-align: center; color: #0288d1; margin-top: 10px; margin-bottom: 0;'>SeHe.AI</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 15px; color: #666; font-weight: bold; margin-top: 0;'>by rikoba</p>", unsafe_allow_html=True)
+
+with col3:
+    # Ikan terbang sisi kanan (efek dibalik menghadap ke kiri menggunakan CSS html)
+    st.markdown("<div style='text-align: right;'><img src='https://wikimedia.org' style='transform: scaleX(-1);' width='70'></div>", unsafe_allow_html=True)
+
 st.divider()
 
 # 3. Membaca API Key secara aman dari sistem Secrets Streamlit
