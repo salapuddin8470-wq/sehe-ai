@@ -71,7 +71,7 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
     with st.chat_message(message["role"], avatar=avatar_icon):
-        st.markdown(message["content"]unsafe_allow_html=True)
+        st.markdown(message["content"], unsafe_allow_html=True) # Perbaikan: penambahan koma
 
 # 8. Kolom input chat di bagian bawah layar
 if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
@@ -87,7 +87,7 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
 
         # Tampilkan jawaban AI di layar web dengan avatar ikan
         with st.chat_message("assistant", avatar="🐟"):
-            st.markdown(ai_response,unsafe_allow_html=True)
+            st.markdown(ai_response, unsafe_allow_html=True) # Perbaikan: penambahan spasi agar lebih rapi
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
 
     except Exception as e:
