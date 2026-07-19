@@ -1,6 +1,6 @@
 import streamlit as st
 from google import genai
-from google.genai import types # Modul baru untuk mengatur konfigurasi dan karakter AI
+from google.genai import types
 import os
 
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
@@ -38,10 +38,11 @@ if not GEMINI_API_KEY:
     st.error("API Key Gemini belum diatur di menu Secrets!")
     st.stop()
 
-# Inisialisasi API Google Gemini menggunakan format Client terbaru
-client = genai.Client(api_key=GEMINI_API_KEY)
+# --- PERBAIKAN UTAMA: Menyimpan Client di session_state agar koneksi tidak terputus ---
+if "gemini_client" not in st.session_state:
+    st.session_state.gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
-# --- BAGIAN BARU: Konfigurasi Karakter (System Instruction) ---
+# 4. Konfigurasi Karakter (System Instruction)
 ai_config = types.GenerateContentConfig(
     system_instruction=(
         "Anda adalah SeHe.AI, asisten cerdas, profesional, dan ramah yang dirancang khusus untuk "
@@ -51,27 +52,27 @@ ai_config = types.GenerateContentConfig(
         "Anda sangat memahami kondisi dan tantangan maritim pesisir, khususnya karakteristik perairan seperti di Sumbawa, NTB. "
         "Selalu berikan panduan yang praktis, masuk akal, aman, dan solutif."
     ),
-    temperature=0.7, # Tingkat kreativitas jawaban (0.0 sangat kaku, 1.0 sangat kreatif)
+    temperature=0.7, 
 )
 
-# --- BAGIAN BARU: Inisialisasi Memori Obrolan (Chat Session) ---
+# 5. Inisialisasi Memori Obrolan (Chat Session) menggunakan Client yang sudah disimpan
 if "chat_session" not in st.session_state:
-    st.session_state.chat_session = client.chats.create(
+    st.session_state.chat_session = st.session_state.gemini_client.chats.create(
         model='gemini-2.5-flash',
         config=ai_config
     )
 
-# 4. Wadah untuk menyimpan riwayat percakapan khusus untuk tampilan layar
+# 6. Wadah untuk menyimpan riwayat percakapan khusus untuk tampilan layar
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# 5. Menampilkan riwayat chat di layar web
+# 7. Menampilkan riwayat chat di layar web
 for message in st.session_state.messages:
     avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
     with st.chat_message(message["role"], avatar=avatar_icon):
         st.markdown(message["content"])
 
-# 6. Kolom input chat di bagian bawah layar
+# 8. Kolom input chat di bagian bawah layar
 if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     # Tampilkan pesan yang Anda ketik ke layar
     st.chat_message("user", avatar="👤").markdown(prompt)
