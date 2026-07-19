@@ -1,5 +1,6 @@
 import streamlit as st
 from google import genai
+from google.genai import types # Modul baru untuk mengatur konfigurasi dan karakter AI
 import os
 
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
@@ -26,6 +27,7 @@ st.html("""
 """)
 
 st.divider()
+
 # 3. Membaca API Key secara aman dari sistem Secrets Streamlit
 if "GEMINI_API_KEY" in st.secrets:
     GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
@@ -39,7 +41,27 @@ if not GEMINI_API_KEY:
 # Inisialisasi API Google Gemini menggunakan format Client terbaru
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-# 4. Wadah untuk menyimpan riwayat percakapan agar SeHe.AI ingat konteks chat
+# --- BAGIAN BARU: Konfigurasi Karakter (System Instruction) ---
+ai_config = types.GenerateContentConfig(
+    system_instruction=(
+        "Anda adalah SeHe.AI, asisten cerdas, profesional, dan ramah yang dirancang khusus untuk "
+        "membantu nelayan dan pembudidaya pesisir. Anda memiliki keahlian teknis dalam bidang perikanan, "
+        "teknologi tepat guna kelautan, budidaya kerang mutiara (Pinctada maxima), teknik perakitan longline, "
+        "desain sistem penjangkaran (termasuk pemberat/batu peredam), hingga desain wadah budidaya mandiri. "
+        "Anda sangat memahami kondisi dan tantangan maritim pesisir, khususnya karakteristik perairan seperti di Sumbawa, NTB. "
+        "Selalu berikan panduan yang praktis, masuk akal, aman, dan solutif."
+    ),
+    temperature=0.7, # Tingkat kreativitas jawaban (0.0 sangat kaku, 1.0 sangat kreatif)
+)
+
+# --- BAGIAN BARU: Inisialisasi Memori Obrolan (Chat Session) ---
+if "chat_session" not in st.session_state:
+    st.session_state.chat_session = client.chats.create(
+        model='gemini-2.5-flash',
+        config=ai_config
+    )
+
+# 4. Wadah untuk menyimpan riwayat percakapan khusus untuk tampilan layar
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -55,13 +77,10 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     st.chat_message("user", avatar="👤").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Kirim pertanyaan ke server Google menggunakan metode versi terbaru
+    # Kirim pertanyaan menggunakan metode Chat Session agar riwayat diingat oleh AI
     try:
         with st.spinner("SeHe.AI sedang mengarungi lautan data..."):
-            response = client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=prompt
-            )
+            response = st.session_state.chat_session.send_message(prompt)
             ai_response = response.text
 
         # Tampilkan jawaban AI di layar web dengan avatar ikan
