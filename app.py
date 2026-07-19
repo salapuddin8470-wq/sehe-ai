@@ -42,7 +42,7 @@ if not GEMINI_API_KEY:
 if "gemini_client" not in st.session_state:
     st.session_state.gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
-# 4. Konfigurasi Karakter (System Instruction)
+# 4. Konfigurasi Karakter (System Instruction) & Akses Internet
 ai_config = types.GenerateContentConfig(
     system_instruction=(
         "Anda adalah SeHe.AI, asisten cerdas, profesional, dan ramah yang dirancang khusus untuk "
@@ -50,9 +50,12 @@ ai_config = types.GenerateContentConfig(
         "teknologi tepat guna kelautan, budidaya kerang mutiara (Pinctada maxima), teknik perakitan longline, "
         "desain sistem penjangkaran (termasuk pemberat/batu peredam), hingga desain wadah budidaya mandiri. "
         "Anda sangat memahami kondisi dan tantangan maritim pesisir, khususnya karakteristik perairan seperti di Sumbawa, NTB. "
-        "Selalu berikan panduan yang praktis, masuk akal, aman, dan solutif."
+        "Selalu berikan panduan yang praktis, masuk akal, aman, dan solutif. "
+        "PENTING: Jika pengguna menanyakan kondisi cuaca, tinggi gelombang, pasang surut air laut, atau informasi terkini lainnya, "
+        "Anda WAJIB menggunakan alat penelusuran (Google Search) untuk memberikan data yang paling akurat, real-time, dan relevan dengan lokasi pengguna saat ini."
     ),
     temperature=0.7, 
+    tools=[{"google_search": {}}] # <--- FITUR BARU: Memberikan akses internet agar AI bisa melihat cuaca BMKG secara langsung
 )
 
 # 5. Inisialisasi Memori Obrolan (Chat Session) menggunakan Client yang sudah disimpan
