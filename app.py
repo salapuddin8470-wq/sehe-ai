@@ -38,7 +38,7 @@ if not GEMINI_API_KEY:
     st.error("API Key Gemini belum diatur di menu Secrets!")
     st.stop()
 
-# --- PERBAIKAN UTAMA: Menyimpan Client di session_state agar koneksi tidak terputus ---
+# --- Menyimpan Client di session_state agar koneksi tidak terputus ---
 if "gemini_client" not in st.session_state:
     st.session_state.gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
@@ -68,10 +68,20 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # 7. Menampilkan riwayat chat di layar web
-for message in st.session_state.messages:
+for i, message in enumerate(st.session_state.messages):
     avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
     with st.chat_message(message["role"], avatar=avatar_icon):
-        st.markdown(message["content"], unsafe_allow_html=True) # Perbaikan: penambahan koma
+        st.markdown(message["content"], unsafe_allow_html=True)
+        
+        # --- FITUR BARU: Menambahkan tombol download untuk setiap jawaban riwayat AI ---
+        if message["role"] == "assistant":
+            st.download_button(
+                label="⬇️ Download sebagai HTML",
+                data=message["content"],
+                file_name=f"Dokumen_SeHe_AI_{i}.html",
+                mime="text/html",
+                key=f"dl_btn_{i}"
+            )
 
 # 8. Kolom input chat di bagian bawah layar
 if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
@@ -87,7 +97,18 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
 
         # Tampilkan jawaban AI di layar web dengan avatar ikan
         with st.chat_message("assistant", avatar="🐟"):
-            st.markdown(ai_response, unsafe_allow_html=True) # Perbaikan: penambahan spasi agar lebih rapi
+            st.markdown(ai_response, unsafe_allow_html=True)
+            
+            # --- FITUR BARU: Menambahkan tombol download untuk jawaban AI yang baru ---
+            new_idx = len(st.session_state.messages)
+            st.download_button(
+                label="⬇️ Download sebagai HTML",
+                data=ai_response,
+                file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
+                mime="text/html",
+                key=f"dl_btn_{new_idx}"
+            )
+            
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
 
     except Exception as e:
