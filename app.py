@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 import os
 
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
@@ -21,7 +21,7 @@ st.html("""
 </g>
 </svg>
 <h1 style="color: #0288d1; margin-top: -10px; margin-bottom: 0; font-size: 34px; font-weight: bold; letter-spacing: 0.5px;">SeHe.AI</h1>
-<p style="font-size: 14px; color: #777; font-weight: 600; margin-top: 3px; margin-dash: 0; letter-spacing: 1px;">by rikoba</p>
+<p style="font-size: 14px; color: #777; font-weight: 600; margin-top: 3px; margin-bottom: 0; letter-spacing: 1px;">by rikoba</p>
 </div>
 """)
 
@@ -36,8 +36,8 @@ if not GEMINI_API_KEY:
     st.error("API Key Gemini belum diatur di menu Secrets!")
     st.stop()
 
-# Inisialisasi API Google Gemini versi stabil
-genai.configure(api_key=GEMINI_API_KEY)
+# Inisialisasi API Google Gemini menggunakan format Client terbaru
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # 4. Wadah untuk menyimpan riwayat percakapan agar SeHe.AI ingat konteks chat
 if "messages" not in st.session_state:
@@ -55,11 +55,13 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     st.chat_message("user", avatar="👤").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Kirim pertanyaan ke server Google menggunakan metode versi stabil
+    # Kirim pertanyaan ke server Google menggunakan metode versi terbaru
     try:
         with st.spinner("SeHe.AI sedang mengarungi lautan data..."):
-            model = genai.GenerativeModel('gemini-2.5-flash')
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt
+            )
             ai_response = response.text
 
         # Tampilkan jawaban AI di layar web dengan avatar ikan
