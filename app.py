@@ -32,7 +32,7 @@ st.markdown("""
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
     /* ------------------------------------------------------------- */
-    /* LATER BELAKANG LAUTAN & ANIMASI BIOTA LAUT (IKAN & GELEMBUNG) */
+    /* LATAR BELAKANG LAUTAN & ANIMASI BIOTA LAUT (IKAN & GELEMBUNG) */
     /* ------------------------------------------------------------- */
     .stApp {
         background: linear-gradient(135deg, #060a12 0%, #013152 50%, #001f22 100%);
@@ -46,25 +46,26 @@ st.markdown("""
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
         background-image: 
-            /* Gambar Ikan 1 */
-            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="30" height="20" viewBox="0 0 30 20"><path d="M5,10 C12,4 22,5 26,10 C22,15 12,16 5,10 Z M26,10 L30,6 L28,10 L30,14 Z" fill="rgba(38, 198, 218, 0.25)"/><circle cx="8" cy="9" r="1" fill="rgba(255,255,255,0.4)"/></svg>'),
-            /* Gambar Ikan 2 */
-            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="16" viewBox="0 0 24 16"><path d="M4,8 C10,3 18,4 21,8 C18,12 10,13 4,8 Z M21,8 L24,5 L22,8 L24,11 Z" fill="rgba(3, 169, 244, 0.2)"/><circle cx="7" cy="7" r="0.8" fill="rgba(255,255,255,0.4)"/></svg>'),
-            /* Gelembung Udara */
-            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" stroke="rgba(255,255,255,0.15)" stroke-width="0.8" fill="none"/></svg>'),
-            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="rgba(255,255,255,0.1)" stroke-width="0.8" fill="none"/></svg>');
+            /* Gambar Ikan 1 (Berwarna Cyan Transparan) */
+            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="30" height="20" viewBox="0 0 30 20"><path d="M5,10 C12,4 22,5 26,10 C22,15 12,16 5,10 Z M26,10 L30,6 L28,10 L30,14 Z" fill="rgba(38, 198, 218, 0.2)"/><circle cx="8" cy="9" r="1" fill="rgba(255,255,255,0.3)"/></svg>'),
+            /* Gambar Ikan 2 (Berwarna Biru Transparan) */
+            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="16" viewBox="0 0 24 16"><path d="M4,8 C10,3 18,4 21,8 C18,12 10,13 4,8 Z M21,8 L24,5 L22,8 L24,11 Z" fill="rgba(3, 169, 244, 0.15)"/><circle cx="7" cy="7" r="0.8" fill="rgba(255,255,255,0.3)"/></svg>'),
+            /* Gelembung Udara Kecil */
+            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" stroke="rgba(255,255,255,0.12)" stroke-width="0.8" fill="none"/></svg>'),
+            /* Gelembung Udara Besar */
+            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" fill="none"/></svg>');
         background-position: 10% 20%, 85% 60%, 30% 80%, 75% 30%;
         background-repeat: no-repeat;
-        animation: oceanMove 25s infinite linear;
+        animation: oceanMove 30s infinite linear;
         z-index: 1;
         pointer-events: none;
     }
 
-    /* Gerakan Arus Alami Bawah Laut */
+    /* Gerakan Arus Alami Bergerak Lambat Nyaman di Mata */
     @keyframes oceanMove {
-        0% { background-position: -5% 20%, 105% 60%, 30% 110%, 75% 110%; }
-        50% { background-position: 50% 18%, 45% 63%, 33% 50%, 72% 40%; }
-        100% { background-position: 105% 20%, -5% 60%, 36% -10%, 70% -10%; }
+        0% { background-position: -10% 20%, 110% 60%, 20% 110%, 80% 110%; }
+        50% { background-position: 50% 15%, 45% 65%, 25% 50%, 75% 40%; }
+        100% { background-position: 110% 20%, -10% 60%, 30% -10%, 70% -10%; }
     }
     
     /* ------------------------------------------------------------- */
@@ -101,7 +102,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 2. Desain Tampilan Depan / Header Utama (Sintaks URL XML Diperbaiki)
+# 2. Desain Tampilan Depan / Header Utama (Sintaks URL XML & Posisi Nama Diperbaiki)
 st.html("""
 <div style="text-align: center; margin-bottom: 20px; font-family: sans-serif; position: relative;">
 <svg width="220" height="130" viewBox="0 0 220 150" fill="none" xmlns="http://w3.org" style="display: block; margin: 0 auto;">
@@ -170,7 +171,7 @@ for i, message in enumerate(st.session_state.messages):
     with st.chat_message(message["role"], avatar=avatar_icon):
         st.markdown(message["content"], unsafe_allow_html=True)
         
-        # --- FITUR BARU: Menambahkan tombol download untuk setiap jawaban riwayat AI ---
+        # --- FITUR DOWNLOAD: Menambahkan tombol download untuk setiap jawaban riwayat AI ---
         if message["role"] == "assistant":
             st.download_button(
                 label="⬇️ Download sebagai HTML",
@@ -192,5 +193,3 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             response = st.session_state.chat_session.send_message(prompt)
             ai_response = response.text
 
-        # Tampilkan jawaban AI di layar web dengan avatar ikan
-        with st.chat_message("assistant", avatar="🐟"):
