@@ -6,17 +6,19 @@ import os
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
 
-# Custom CSS untuk tampilan premium minimalis, animasi ikan, & background lautan hidup
+# Custom CSS Premium, Ringan, Minimalis & Bebas Lag (Optimasi Arsitektur Performa)
 st.markdown("""
 <style>
-    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI */
+    /* ------------------------------------------------------------- */
+    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI   */
+    /* ------------------------------------------------------------- */
     header {visibility: hidden !important; height: 0px !important;}
     footer {visibility: hidden !important;}
     .viewerBadge_link__1S137 {display: none !important;}
     [data-testid="stStatusWidget"] {visibility: hidden !important;}
     [data-testid="stDecoration"] {display: none !important;}
     
-    /* Mengurangi ruang kosong (padding) atas yang terlalu besar */
+    /* Mengurangi ruang kosong (padding) atas agar tata letak rapat */
     .block-container {
         padding-top: 2rem !important;
         padding-bottom: 2rem !important;
@@ -29,46 +31,26 @@ st.markdown("""
     @import url('https://googleapis.com');
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    /* LATAR BELAKANG LAUTAN & ANIMASI BIOTA LAUT (IKAN & GELEMBUNG) */
+    /* ------------------------------------------------------------- */
+    /* LATAR BELAKANG LAUTAN DEEP SEA (DIPERBAIKI AGAR SUPERS CEPAT) */
+    /* ------------------------------------------------------------- */
     .stApp {
-        background: linear-gradient(135deg, #060a12 0%, #013152 50%, #001f22 100%);
-        background-attachment: fixed;
+        background: linear-gradient(135deg, #04080f 0%, #01243f 50%, #001417 100%) !important;
+        background-attachment: fixed !important;
         overflow-x: hidden;
     }
-
-    /* Membuat kontainer animasi di latar belakang */
-    .stApp::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-image: 
-            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="30" height="20" viewBox="0 0 30 20"><path d="M5,10 C12,4 22,5 26,10 C22,15 12,16 5,10 Z M26,10 L30,6 L28,10 L30,14 Z" fill="rgba(38, 198, 218, 0.2)"/><circle cx="8" cy="9" r="1" fill="rgba(255,255,255,0.3)"/></svg>'),
-            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="16" viewBox="0 0 24 16"><path d="M4,8 C10,3 18,4 21,8 C18,12 10,13 4,8 Z M21,8 L24,5 L22,8 L24,11 Z" fill="rgba(3, 169, 244, 0.15)"/><circle cx="7" cy="7" r="0.8" fill="rgba(255,255,255,0.3)"/></svg>'),
-            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" stroke="rgba(255,255,255,0.12)" stroke-width="0.8" fill="none"/></svg>'),
-            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" fill="none"/></svg>');
-        background-position: 10% 20%, 85% 60%, 30% 80%, 75% 30%;
-        background-repeat: no-repeat;
-        animation: oceanMove 30s infinite linear;
-        z-index: 1;
-        pointer-events: none;
-    }
-
-    /* Gerakan Arus Alami Bergerak Lambat Nyaman di Mata */
-    @keyframes oceanMove {
-        0% { background-position: -10% 20%, 110% 60%, 20% 110%, 80% 110%; }
-        50% { background-position: 50% 15%, 45% 65%, 25% 50%, 75% 40%; }
-        100% { background-position: 110% 20%, -10% 60%, 30% -10%, 70% -10%; }
-    }
     
-    /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM) */
+    /* ------------------------------------------------------------- */
+    /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM)                  */
+    /* ------------------------------------------------------------- */
     [data-testid="stSidebar"] {
-        background: rgba(6, 10, 18, 0.7) !important;
+        background: rgba(4, 8, 15, 0.75) !important;
         backdrop-filter: blur(20px);
         border-right: 1px solid rgba(255, 255, 255, 0.05);
         z-index: 3;
     }
     
-    /* AREA CHAT & INPUT UTAMA */
+    /* AREA KOTAK PESAN PERCAKAPAN */
     .stChatMessage {
         background: rgba(255, 255, 255, 0.03) !important;
         backdrop-filter: blur(12px);
@@ -79,20 +61,22 @@ st.markdown("""
         color: #f1f5f9 !important;
     }
     
+    /* INPUT UTAMA MELAYANG */
     [data-testid="stChatInput"] {
         border-radius: 12px !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        background-color: rgba(10, 18, 32, 0.85) !important;
+        background-color: rgba(6, 12, 24, 0.9) !important;
         backdrop-filter: blur(10px);
     }
     
+    /* Desain Ramping Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.2); border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
-# 2. Desain Tampilan Depan / Header Utama (Sintaks URL XML & Posisi Nama Diperbaiki)
+# 2. Desain Tampilan Depan / Header Utama (Posisi Kredit di Kanan Bawah SeHe.AI)
 st.html("""
 <div style="text-align: center; margin-bottom: 20px; font-family: sans-serif; position: relative;">
 <svg width="220" height="130" viewBox="0 0 220 150" fill="none" xmlns="http://w3.org" style="display: block; margin: 0 auto;">
@@ -199,3 +183,5 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
 
+    except Exception as e:
+        st.error(f"Terjadi kesalahan: {e}. Pastikan internet Anda aktif.")
