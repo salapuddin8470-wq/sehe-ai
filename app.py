@@ -7,29 +7,98 @@ import os
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
 # Custom CSS untuk tampilan premium lautan, glassmorphism, dan animasi
 st.markdown("""
+# Custom CSS untuk tampilan premium minimalis & bertema lautan
+st.markdown("""
 <style>
     /* ------------------------------------------------------------- */
-    /* MENYEMBUNYIKAN LOGO GITHUB & HEADER BAWAAN STREAMLIT          */
+    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI   */
     /* ------------------------------------------------------------- */
-    header {visibility: hidden !important;}
+    header {visibility: hidden !important; height: 0px !important;}
     footer {visibility: hidden !important;}
     .viewerBadge_link__1S137 {display: none !important;}
     [data-testid="stStatusWidget"] {visibility: hidden !important;}
+    [data-testid="stDecoration"] {display: none !important;}
     
+    /* Mengurangi ruang kosong (padding) atas yang terlalu besar */
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+        max-width: 1000px !important;
+    }
+
     /* Import Font Premium */
     @import url('https://googleapis.com');
-    
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
     /* Tema Dasar & Gradient Lautan */
     .stApp {
-        background: linear-gradient(135deg, #0f172a 0%, #0288d1 50%, #006064 100%);
+        background: linear-gradient(135deg, #090d16 0%, #014d7c 60%, #00363a 100%);
         background-attachment: fixed;
     }
     
-    /* ... sisa kode CSS Anda yang lain ... */
+    /* ------------------------------------------------------------- */
+    /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM)                  */
+    /* ------------------------------------------------------------- */
+    [data-testid="stSidebar"] {
+        background: rgba(9, 13, 22, 0.7) !important;
+        backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Menyederhanakan tampilan dropdown & input di sidebar */
+    .stSelectbox, .stSlider {
+        margin-bottom: 20px !important;
+    }
+    
+    /* Tombol Perintah Cepat (Quick Prompt Cards) Minimalis */
+    .quick-prompt-btn {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 12px 16px;
+        border-radius: 10px;
+        color: #cbd5e1;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 8px;
+        font-size: 13.5px;
+        text-align: left;
+    }
+    .quick-prompt-btn:hover {
+        background: rgba(3, 169, 244, 0.15);
+        border-color: rgba(3, 169, 244, 0.5);
+        color: #fff;
+        transform: translateY(-1px);
+    }
+    
+    /* ------------------------------------------------------------- */
+    /* AREA CHAT & INPUT UTAMA                                       */
+    /* ------------------------------------------------------------- */
+    .stChatMessage {
+        background: rgba(255, 255, 255, 0.04) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-radius: 12px !important;
+        margin-bottom: 12px !important;
+        padding: 15px !important;
+        color: #f1f5f9 !important;
+    }
+    
+    /* Form input chat di bagian bawah dibuat melayang & rapi */
+    [data-testid="stChatInput"] {
+        border-radius: 12px !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background-color: rgba(15, 23, 42, 0.8) !important;
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(3, 169, 244, 0.5); }
 </style>
 """, unsafe_allow_html=True)
+
 
 # 2. Desain Tampilan Depan / Header Utama (Versi html Murni Tanpa Bug Kotak Abu-abu)
 st.html("""
