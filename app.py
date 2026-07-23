@@ -1,4 +1,3 @@
-
 import streamlit as st
 from google import genai
 from google.genai import types
@@ -11,25 +10,45 @@ st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="�
 st.markdown("""
 <style>
     /* ------------------------------------------------------------- */
+    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI   */
     /* ------------------------------------------------------------- */
-/* MENYEMBUNYIKAN LOGO MERAH TANPA MENGGANGGU APP MANAGER ADMIN  */
-/* ------------------------------------------------------------- */
-header {visibility: hidden !important; height: 0px !important;}
-footer {visibility: hidden !important;}
-[data-testid="stDecoration"] {display: none !important;}
-
-/* HANYA MENYEMBUNYIKAN LOGO STREAMLIT MERAH DI HP ORANG LAIN */
-.viewerBadge_link__1S137, 
-[data-testid="stViewerBadge"], 
-a[href*="streamlit.io"] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0px !important;
-}
-
-/* CATATAN: Kode [data-testid="stStatusWidget"] sengaja DIHAPUS */
-/* agar tombol "Manage app" di HP Anda tetap muncul normal. */
+    header {visibility: hidden !important; height: 0px !important;}
+    footer {visibility: hidden !important;}
+    .viewerBadge_link__1S137 {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    
+    /* ------------------------------------------------------------- */
+    /* KHUSUS: MENYEMBUNYIKAN KEDUA IKON MERAH DI HP ORANG LAIN       */
+    /* ------------------------------------------------------------- */
+    /* 1. Menghilangkan ikon mahkota merah (Hosted with Streamlit) */
+    [data-testid="stViewerBadge"], 
+    .viewerBadge_container__1S137, 
+    a[href*="streamlit.io"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0px !important;
+        width: 0px !important;
+    }
+    
+    /* 2. Menghilangkan ikon status koneksi titik-titik merah */
+    [data-testid="stConnectionStatus"],
+    .stConnectionStatus,
+    div[class*="stConnectionStatus"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0px !important;
+    }
+    
+    /* Mengurangi ruang kosong (padding) atas agar tata letak rapat */
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+        max-width: 1000px !important;
+        position: relative;
+        z-index: 2;
+    }
 
     /* Import Font Premium */
     @import url('https://googleapis.com');
@@ -37,24 +56,19 @@ a[href*="streamlit.io"] {
     
     /* ------------------------------------------------------------- */
     /* MEMAKSA SEMUA TEKS BERWARNA PUTIH TERANG (KONTRAS TINGGI)     */
-    /* PERBAIKAN: Mengecualikan area ketikan agar tidak ikut putih  */
     /* ------------------------------------------------------------- */
     .stApp p, .stApp li, .stApp span, .stApp div:not([data-testid="stChatInput"]), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
         color: #ffffff !important;
     }
     
-    /* ------------------------------------------------------------- */
-    /* LATAR BELAKANG LAUTAN DEEP SEA                                */
-    /* ------------------------------------------------------------- */
+    /* LATAR BELAKANG LAUTAN DEEP SEA */
     .stApp {
         background: linear-gradient(135deg, #04080f 0%, #01243f 50%, #001417 100%) !important;
         background-attachment: fixed !important;
         overflow-x: hidden;
     }
     
-    /* ------------------------------------------------------------- */
-    /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM)                  */
-    /* ------------------------------------------------------------- */
+    /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM) */
     [data-testid="stSidebar"] {
         background: rgba(4, 8, 15, 0.85) !important;
         backdrop-filter: blur(20px);
@@ -76,9 +90,7 @@ a[href*="streamlit.io"] {
         color: #ffffff !important;
     }
     
-    /* ------------------------------------------------------------- */
-    /* KOTAK INPUT UTAMA MELAYANG & WARNA HURUF SAAT MENGETIK CHAT   */
-    /* ------------------------------------------------------------- */
+    /* KOTAK INPUT UTAMA MELAYANG & WARNA HURUF SAAT MENGETIK CHAT */
     [data-testid="stChatInput"] {
         border-radius: 12px !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
@@ -136,7 +148,7 @@ if not GEMINI_API_KEY:
 if "gemini_client" not in st.session_state:
     st.session_state.gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
-# 4. Konfigurasi Karakter (Optimasi Kode Nomor 5 - Format Tabel Administrasi Formal)
+# 4. Konfigurasi Karakter (Format Tabel Administrasi Formal)
 ai_config = types.GenerateContentConfig(
     system_instruction=(
         "Anda adalah SeHe.AI, asisten super cerdas dengan kemampuan ganda di bidang perikanan pesisir "
@@ -202,6 +214,7 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             new_idx = len(st.session_state.messages)
             st.download_button(
                 label="⬇️ Download sebagai HTML",
+
                 data=ai_response,
                 file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
                 mime="text/html",
