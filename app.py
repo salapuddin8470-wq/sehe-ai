@@ -17,30 +17,6 @@ st.markdown("""
     .viewerBadge_link__1S137 {display: none !important;}
     [data-testid="stDecoration"] {display: none !important;}
     
-    /* ------------------------------------------------------------- */
-    /* KHUSUS: MENYEMBUNYIKAN KEDUA IKON MERAH DI HP ORANG LAIN       */
-    /* ------------------------------------------------------------- */
-    /* 1. Menghilangkan ikon mahkota merah (Hosted with Streamlit) */
-    [data-testid="stViewerBadge"], 
-    .viewerBadge_container__1S137, 
-    a[href*="streamlit.io"] {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0px !important;
-        width: 0px !important;
-    }
-    
-    /* 2. Menghilangkan ikon status koneksi titik-titik merah */
-    [data-testid="stConnectionStatus"],
-    .stConnectionStatus,
-    div[class*="stConnectionStatus"] {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0px !important;
-    }
-    
     /* Mengurangi ruang kosong (padding) atas agar tata letak rapat */
     .block-container {
         padding-top: 2rem !important;
@@ -85,7 +61,6 @@ st.markdown("""
         margin-bottom: 12px !important;
     }
     
-    /* Memastikan teks respon AI di dalam chat tetap putih tajam */
     [data-testid="stChatMessageContent"] {
         color: #ffffff !important;
     }
@@ -103,12 +78,39 @@ st.markdown("""
         font-weight: 500 !important;
     }
     
-    /* Desain Ramping Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.2); border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
+
+# -------------------------------------------------------------
+# JAVASCRIPT INJEKTOR MUTAKHIR: PEMUSNAH DUA IKON MERAH USER GENERAL
+# -------------------------------------------------------------
+st.components.v1.html("""
+<script>
+    function hapusElemenMerah() {
+        // Cari elemen penampung utama status koneksi dan mahkota merah
+        const appToolbar = window.parent.document.querySelector('div[data-testid="stStatusWidget"]');
+        if (appToolbar) {
+            // Sembunyikan ikon status koneksi jika ada
+            const statusKoneksi = appToolbar.querySelector('div[data-testid="stConnectionStatus"]');
+            if (statusKoneksi) {
+                statusKoneksi.style.setProperty('display', 'none', 'important');
+            }
+            
+            // Sembunyikan ikon mahkota merah (Hosted with Streamlit)
+            const mahkotaMerah = appToolbar.querySelector('div[data-testid="stViewerBadge"]');
+            if (mahkotaMerah) {
+                mahkotaMerah.style.setProperty('display', 'none', 'important');
+            }
+        }
+    }
+    
+    // Jalankan pembersihan berulang untuk memastikan komponen hancur saat render selesai
+    setInterval(hapusElemenMerah, 500);
+</script>
+""", height=0, width=0)
 
 # 2. Desain Tampilan Depan / Header Utama
 st.html("""
@@ -210,6 +212,7 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
         with st.chat_message("assistant", avatar="🐟"):
             st.markdown(ai_response, unsafe_allow_html=True)
             
+
             # --- FITUR DOWNLOAD: Menambahkan tombol download untuk jawaban AI yang baru ---
             new_idx = len(st.session_state.messages)
             st.download_button(
