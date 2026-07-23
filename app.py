@@ -6,7 +6,7 @@ import os
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
 
-# Custom CSS Premium, Ringan, Minimalis & Bebas Lag (Optimasi Arsitektur Performa)
+# Custom CSS Premium, Ringan, Minimalis & Kontras Tinggi (Anti Tulisan Samar)
 st.markdown("""
 <style>
     /* ------------------------------------------------------------- */
@@ -32,7 +32,14 @@ st.markdown("""
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
     /* ------------------------------------------------------------- */
-    /* LATAR BELAKANG LAUTAN DEEP SEA (DIPERBAIKI AGAR SUPERS CEPAT) */
+    /* MEMAKSA SEMUA TEKS BERWARNA PUTIH TERANG (KONTRAS TINGGI)     */
+    /* ------------------------------------------------------------- */
+    .stApp p, .stAppli, .stApp span, .stApp div, .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+        color: #ffffff !important;
+    }
+    
+    /* ------------------------------------------------------------- */
+    /* LATAR BELAKANG LAUTAN DEEP SEA                                */
     /* ------------------------------------------------------------- */
     .stApp {
         background: linear-gradient(135deg, #04080f 0%, #01243f 50%, #001417 100%) !important;
@@ -44,28 +51,32 @@ st.markdown("""
     /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM)                  */
     /* ------------------------------------------------------------- */
     [data-testid="stSidebar"] {
-        background: rgba(4, 8, 15, 0.75) !important;
+        background: rgba(4, 8, 15, 0.85) !important;
         backdrop-filter: blur(20px);
         border-right: 1px solid rgba(255, 255, 255, 0.05);
         z-index: 3;
     }
     
-    /* AREA KOTAK PESAN PERCAKAPAN */
+    /* AREA KOTAK PESAN PERCAKAPAN & TEKS DI DALAMNYA */
     .stChatMessage {
-        background: rgba(255, 255, 255, 0.03) !important;
+        background: rgba(255, 255, 255, 0.05) !important;
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         border-radius: 12px !important;
         margin-bottom: 12px !important;
         padding: 15px !important;
-        color: #f1f5f9 !important;
+    }
+    
+    /* Memastikan teks respon AI di dalam chat tetap putih tajam */
+    [data-testid="stChatMessageContent"] {
+        color: #ffffff !important;
     }
     
     /* INPUT UTAMA MELAYANG */
     [data-testid="stChatInput"] {
         border-radius: 12px !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        background-color: rgba(6, 12, 24, 0.9) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        background-color: rgba(6, 12, 24, 0.95) !important;
         backdrop-filter: blur(10px);
     }
     
@@ -76,7 +87,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 2. Desain Tampilan Depan / Header Utama (Posisi Kredit di Kanan Bawah SeHe.AI)
+# 2. Desain Tampilan Depan / Header Utama
 st.html("""
 <div style="text-align: center; margin-bottom: 20px; font-family: sans-serif; position: relative;">
 <svg width="220" height="130" viewBox="0 0 220 150" fill="none" xmlns="http://w3.org" style="display: block; margin: 0 auto;">
@@ -92,8 +103,8 @@ st.html("""
 </g>
 </svg>
 <div style="display: inline-block; text-align: left; position: relative;">
-    <h1 style="color: #03a9f4; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 0.5px; display: inline-block;">SeHe.AI</h1>
-    <span style="font-size: 11px; color: rgba(255, 255, 255, 0.4); font-style: italic; position: absolute; bottom: -8px; right: 2px; white-space: nowrap;">by rikoba</span>
+    <h1 style="color: #03a9f4 !important; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 0.5px; display: inline-block;">SeHe.AI</h1>
+    <span style="font-size: 11px; color: rgba(255, 255, 255, 0.5) !important; font-style: italic; position: absolute; bottom: -8px; right: 2px; white-space: nowrap;">by rikoba</span>
 </div>
 </div>
 """)
