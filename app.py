@@ -147,11 +147,10 @@ ai_config = types.GenerateContentConfig(
     tools=[{"google_search": {}}]
 )
 
-
-# 5. Inisialisasi Memori Obrolan (Chat Session) menggunakan Client yang sudah disimpan
+# 5. Inisialisasi Memori Obrolan (Chat Session) - UPGRADE TO PRO
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = st.session_state.gemini_client.chats.create(
-        model='gemini-2.5-flash',
+        model='gemini-2.5-pro',  # <-- Ganti menjadi pro
         config=ai_config
     )
 
