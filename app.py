@@ -9,9 +9,7 @@ st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="�
 # Custom CSS untuk tampilan premium minimalis, animasi ikan, & background lautan hidup
 st.markdown("""
 <style>
-    /* ------------------------------------------------------------- */
-    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI   */
-    /* ------------------------------------------------------------- */
+    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI */
     header {visibility: hidden !important; height: 0px !important;}
     footer {visibility: hidden !important;}
     .viewerBadge_link__1S137 {display: none !important;}
@@ -31,9 +29,7 @@ st.markdown("""
     @import url('https://googleapis.com');
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    /* ------------------------------------------------------------- */
     /* LATAR BELAKANG LAUTAN & ANIMASI BIOTA LAUT (IKAN & GELEMBUNG) */
-    /* ------------------------------------------------------------- */
     .stApp {
         background: linear-gradient(135deg, #060a12 0%, #013152 50%, #001f22 100%);
         background-attachment: fixed;
@@ -46,13 +42,9 @@ st.markdown("""
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
         background-image: 
-            /* Gambar Ikan 1 (Berwarna Cyan Transparan) */
             url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="30" height="20" viewBox="0 0 30 20"><path d="M5,10 C12,4 22,5 26,10 C22,15 12,16 5,10 Z M26,10 L30,6 L28,10 L30,14 Z" fill="rgba(38, 198, 218, 0.2)"/><circle cx="8" cy="9" r="1" fill="rgba(255,255,255,0.3)"/></svg>'),
-            /* Gambar Ikan 2 (Berwarna Biru Transparan) */
             url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="16" viewBox="0 0 24 16"><path d="M4,8 C10,3 18,4 21,8 C18,12 10,13 4,8 Z M21,8 L24,5 L22,8 L24,11 Z" fill="rgba(3, 169, 244, 0.15)"/><circle cx="7" cy="7" r="0.8" fill="rgba(255,255,255,0.3)"/></svg>'),
-            /* Gelembung Udara Kecil */
             url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" stroke="rgba(255,255,255,0.12)" stroke-width="0.8" fill="none"/></svg>'),
-            /* Gelembung Udara Besar */
             url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" fill="none"/></svg>');
         background-position: 10% 20%, 85% 60%, 30% 80%, 75% 30%;
         background-repeat: no-repeat;
@@ -68,9 +60,7 @@ st.markdown("""
         100% { background-position: 110% 20%, -10% 60%, 30% -10%, 70% -10%; }
     }
     
-    /* ------------------------------------------------------------- */
-    /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM)                  */
-    /* ------------------------------------------------------------- */
+    /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM) */
     [data-testid="stSidebar"] {
         background: rgba(6, 10, 18, 0.7) !important;
         backdrop-filter: blur(20px);
@@ -192,4 +182,20 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
         with st.spinner("SeHe.AI sedang mengarungi lautan data..."):
             response = st.session_state.chat_session.send_message(prompt)
             ai_response = response.text
+
+        # Tampilkan jawaban AI di layar web dengan avatar ikan
+        with st.chat_message("assistant", avatar="🐟"):
+            st.markdown(ai_response, unsafe_allow_html=True)
+            
+            # --- FITUR DOWNLOAD: Menambahkan tombol download untuk jawaban AI yang baru ---
+            new_idx = len(st.session_state.messages)
+            st.download_button(
+                label="⬇️ Download sebagai HTML",
+                data=ai_response,
+                file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
+                mime="text/html",
+                key=f"dl_btn_{new_idx}"
+            )
+            
+        st.session_state.messages.append({"role": "assistant", "content": ai_response})
 
