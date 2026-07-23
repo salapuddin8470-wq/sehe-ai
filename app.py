@@ -1,3 +1,4 @@
+
 import streamlit as st
 from google import genai
 from google.genai import types
@@ -78,11 +79,10 @@ st.markdown("""
     [data-testid="stChatInput"] {
         border-radius: 12px !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        background-color: #ffffff !important; /* Latar belakang kotak dibuat putih bersih */
+        background-color: #ffffff !important;
         backdrop-filter: blur(10px);
     }
     
-    /* Memaksa huruf yang sedang diketik berwarna gelap agar sangat jelas */
     [data-testid="stChatInput"] textarea {
         color: #0f172a !important; 
         font-weight: 500 !important;
@@ -133,24 +133,29 @@ if not GEMINI_API_KEY:
 if "gemini_client" not in st.session_state:
     st.session_state.gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
-# 4. Konfigurasi Karakter Gabungan (Perikanan Modern & Administrasi Pendidikan)
+# 4. Konfigurasi Karakter (Optimasi Kode Nomor 5 - Format Tabel Administrasi Formal)
 ai_config = types.GenerateContentConfig(
     system_instruction=(
-        "Anda adalah SeHe.AI, asisten super cerdas terintegrasi Gemini AI yang memiliki dua keahlian utama: "
-        "1. BIDANG PERIKANAN: Membantu nelayan, pembudidaya pesisir, teknik longline, penjangkaran, budidaya kerang mutiara (Pinctada maxima), dan wadah mandiri. "
-        "2. BIDANG PENDIDIKAN & ADMINISTRASI: Membantu guru, kepala sekolah, dan akademisi dalam menyusun administrasi kelas, RPP, kurikulum, surat formal sekolah, proposal kegiatan, hingga rekapitulasi data nilai siswa. "
-        "Berikan jawaban yang profesional, ramah, dan adaptif sesuai dengan topik yang ditanyakan pengguna. "
+        "Anda adalah SeHe.AI, asisten super cerdas dengan kemampuan ganda di bidang perikanan pesisir "
+        "dan administrasi pendidikan/sekolah. "
         "PENTING 1: Jika pengguna menanyakan cuaca, tinggi gelombang, atau data terkini, WAJIB gunakan alat Google Search. "
-        "PENTING 2: Jika pengguna meminta Anda membuat dokumen, laporan, surat, proposal, atau RPP, buatlah desain tampilan menggunakan elemen HTML dan inline CSS (tanpa tag markdown ```html). Gunakan warna latar belakang, tipografi, bingkai, atau tabel yang elegan dan warnanya otomatis menyesuaikan tema dokumen (biru/cyan untuk perikanan, hijau/navy/formal untuk pendidikan)."
+        "PENTING 2: Jika pengguna meminta tabel, laporan, kurikulum, surat, atau draf administrasi kelas/sekolah, "
+        "Anda WAJIB menampilkannya dalam format tabel/elemen HTML murni dengan inline CSS yang sangat rapi (TANPA menggunakan tag markdown ```html). "
+        "Gunakan standar desain dokumen formal dengan aturan CSS berikut: "
+        "- Seluruh font tabel harus berwarna putih atau abu-abu terang kontras (color: #ffffff !important;). "
+        "- Gunakan border tipis transparan elegan (border: 1px solid rgba(255,255,255,0.15);). "
+        "- Gunakan padding yang lega agar teks tidak mepet (padding: 10px 12px;). "
+        "- Kepala tabel (th) wajib diberi warna latar belakang yang tegas (background-color: #014d7c; text-align: left;). "
+        "- Sediakan efek baris selang-seling atau zebra striping pada baris tabel (tr:nth-child(even) { background-color: rgba(255,255,255,0.03); }) agar dokumen mudah dianalisis dan dibaca."
     ),
     temperature=0.7, 
     tools=[{"google_search": {}}]
 )
 
-# 5. Inisialisasi Memori Obrolan (Chat Session) - KEMBALI KE FLASH AGAR AMAN DARI ERROR 429
+# 5. Inisialisasi Memori Obrolan (Chat Session) menggunakan model Flash yang stabil
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = st.session_state.gemini_client.chats.create(
-        model='gemini-2.5-flash',  # <-- Ubah kembali ke flash di sini
+        model='gemini-2.5-flash',
         config=ai_config
     )
 
@@ -199,6 +204,8 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                 mime="text/html",
                 key=f"dl_btn_{new_idx}"
             )
+            
+
             
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
 
