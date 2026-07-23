@@ -101,7 +101,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 2. Desain Tampilan Depan / Header Utama (Posisi Kredit Digeser ke Kanan Bawah)
+# 2. Desain Tampilan Depan / Header Utama (Sintaks URL XML Diperbaiki)
 st.html("""
 <div style="text-align: center; margin-bottom: 20px; font-family: sans-serif; position: relative;">
 <svg width="220" height="130" viewBox="0 0 220 150" fill="none" xmlns="http://w3.org" style="display: block; margin: 0 auto;">
@@ -121,7 +121,7 @@ st.html("""
     <span style="font-size: 11px; color: rgba(255, 255, 255, 0.4); font-style: italic; position: absolute; bottom: -8px; right: 2px; white-space: nowrap;">by rikoba</span>
 </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 st.divider()
 
