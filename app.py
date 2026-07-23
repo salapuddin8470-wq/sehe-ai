@@ -33,8 +33,9 @@ st.markdown("""
     
     /* ------------------------------------------------------------- */
     /* MEMAKSA SEMUA TEKS BERWARNA PUTIH TERANG (KONTRAS TINGGI)     */
+    /* PERBAIKAN: Mengecualikan area ketikan agar tidak ikut putih  */
     /* ------------------------------------------------------------- */
-    .stApp p, .stAppli, .stApp span, .stApp div, .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+    .stApp p, .stApp li, .stApp span, .stApp div:not([data-testid="stChatInput"]), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
         color: #ffffff !important;
     }
     
@@ -64,7 +65,6 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
         border-radius: 12px !important;
         margin-bottom: 12px !important;
-        padding: 15px !important;
     }
     
     /* Memastikan teks respon AI di dalam chat tetap putih tajam */
@@ -72,12 +72,20 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    /* INPUT UTAMA MELAYANG */
+    /* ------------------------------------------------------------- */
+    /* KOTAK INPUT UTAMA MELAYANG & WARNA HURUF SAAT MENGETIK CHAT   */
+    /* ------------------------------------------------------------- */
     [data-testid="stChatInput"] {
         border-radius: 12px !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        background-color: rgba(6, 12, 24, 0.95) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        background-color: #ffffff !important; /* Latar belakang kotak dibuat putih bersih */
         backdrop-filter: blur(10px);
+    }
+    
+    /* Memaksa huruf yang sedang diketik berwarna gelap agar sangat jelas */
+    [data-testid="stChatInput"] textarea {
+        color: #0f172a !important; 
+        font-weight: 500 !important;
     }
     
     /* Desain Ramping Scrollbar */
