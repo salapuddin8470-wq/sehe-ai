@@ -5,8 +5,7 @@ import os
 
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
-# Custom CSS untuk tampilan premium lautan, glassmorphism, dan animasi
-st.markdown("""
+
 # Custom CSS untuk tampilan premium minimalis & bertema lautan
 st.markdown("""
 <style>
@@ -99,7 +98,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
 # 2. Desain Tampilan Depan / Header Utama (Versi html Murni Tanpa Bug Kotak Abu-abu)
 st.html("""
 <div style="text-align: center; margin-bottom: 20px; font-family: sans-serif;">
@@ -115,8 +113,8 @@ st.html("""
 <circle cx="70" cy="46" r="2" fill="white"/>
 </g>
 </svg>
-<h1 style="color: #0288d1; margin-top: -10px; margin-bottom: 0; font-size: 34px; font-weight: bold; letter-spacing: 0.5px;">SeHe.AI</h1>
-<p style="font-size: 14px; color: #777; font-weight: 600; margin-top: 3px; margin-bottom: 0; letter-spacing: 1px;">by rikoba</p>
+<h1 style="color: #03a9f4; margin-top: -10px; margin-bottom: 0; font-size: 34px; font-weight: bold; letter-spacing: 0.5px;">SeHe.AI</h1>
+<p style="font-size: 14px; color: #b4f4ff; font-weight: 600; margin-top: 3px; margin-bottom: 0; letter-spacing: 1px;">by rikoba</p>
 </div>
 """)
 
