@@ -6,7 +6,7 @@ import os
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
 
-# Custom CSS untuk tampilan premium minimalis & bertema lautan
+# Custom CSS untuk tampilan premium minimalis, animasi ikan, & background lautan hidup
 st.markdown("""
 <style>
     /* ------------------------------------------------------------- */
@@ -23,85 +23,88 @@ st.markdown("""
         padding-top: 2rem !important;
         padding-bottom: 2rem !important;
         max-width: 1000px !important;
+        position: relative;
+        z-index: 2;
     }
 
     /* Import Font Premium */
     @import url('https://googleapis.com');
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    /* Tema Dasar & Gradient Lautan */
+    /* ------------------------------------------------------------- */
+    /* LATER BELAKANG LAUTAN & ANIMASI BIOTA LAUT (IKAN & GELEMBUNG) */
+    /* ------------------------------------------------------------- */
     .stApp {
-        background: linear-gradient(135deg, #090d16 0%, #014d7c 60%, #00363a 100%);
+        background: linear-gradient(135deg, #060a12 0%, #013152 50%, #001f22 100%);
         background-attachment: fixed;
+        overflow-x: hidden;
+    }
+
+    /* Membuat kontainer animasi di latar belakang */
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: 
+            /* Gambar Ikan 1 */
+            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="30" height="20" viewBox="0 0 30 20"><path d="M5,10 C12,4 22,5 26,10 C22,15 12,16 5,10 Z M26,10 L30,6 L28,10 L30,14 Z" fill="rgba(38, 198, 218, 0.25)"/><circle cx="8" cy="9" r="1" fill="rgba(255,255,255,0.4)"/></svg>'),
+            /* Gambar Ikan 2 */
+            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="16" viewBox="0 0 24 16"><path d="M4,8 C10,3 18,4 21,8 C18,12 10,13 4,8 Z M21,8 L24,5 L22,8 L24,11 Z" fill="rgba(3, 169, 244, 0.2)"/><circle cx="7" cy="7" r="0.8" fill="rgba(255,255,255,0.4)"/></svg>'),
+            /* Gelembung Udara */
+            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" stroke="rgba(255,255,255,0.15)" stroke-width="0.8" fill="none"/></svg>'),
+            url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" stroke="rgba(255,255,255,0.1)" stroke-width="0.8" fill="none"/></svg>');
+        background-position: 10% 20%, 85% 60%, 30% 80%, 75% 30%;
+        background-repeat: no-repeat;
+        animation: oceanMove 25s infinite linear;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* Gerakan Arus Alami Bawah Laut */
+    @keyframes oceanMove {
+        0% { background-position: -5% 20%, 105% 60%, 30% 110%, 75% 110%; }
+        50% { background-position: 50% 18%, 45% 63%, 33% 50%, 72% 40%; }
+        100% { background-position: 105% 20%, -5% 60%, 36% -10%, 70% -10%; }
     }
     
     /* ------------------------------------------------------------- */
     /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM)                  */
     /* ------------------------------------------------------------- */
     [data-testid="stSidebar"] {
-        background: rgba(9, 13, 22, 0.7) !important;
+        background: rgba(6, 10, 18, 0.7) !important;
         backdrop-filter: blur(20px);
         border-right: 1px solid rgba(255, 255, 255, 0.05);
+        z-index: 3;
     }
     
-    /* Menyederhanakan tampilan dropdown & input di sidebar */
-    .stSelectbox, .stSlider {
-        margin-bottom: 20px !important;
-    }
-    
-    /* Tombol Perintah Cepat (Quick Prompt Cards) Minimalis */
-    .quick-prompt-btn {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 12px 16px;
-        border-radius: 10px;
-        color: #cbd5e1;
-        cursor: pointer;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-bottom: 8px;
-        font-size: 13.5px;
-        text-align: left;
-    }
-    .quick-prompt-btn:hover {
-        background: rgba(3, 169, 244, 0.15);
-        border-color: rgba(3, 169, 244, 0.5);
-        color: #fff;
-        transform: translateY(-1px);
-    }
-    
-    /* ------------------------------------------------------------- */
-    /* AREA CHAT & INPUT UTAMA                                       */
-    /* ------------------------------------------------------------- */
+    /* AREA CHAT & INPUT UTAMA */
     .stChatMessage {
-        background: rgba(255, 255, 255, 0.04) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
         border-radius: 12px !important;
         margin-bottom: 12px !important;
         padding: 15px !important;
         color: #f1f5f9 !important;
     }
     
-    /* Form input chat di bagian bawah dibuat melayang & rapi */
     [data-testid="stChatInput"] {
         border-radius: 12px !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        background-color: rgba(15, 23, 42, 0.8) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        background-color: rgba(10, 18, 32, 0.85) !important;
         backdrop-filter: blur(10px);
     }
     
-    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.3); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(3, 169, 244, 0.5); }
+    ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.2); border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
-# 2. Desain Tampilan Depan / Header Utama (Versi html Murni Tanpa Bug Kotak Abu-abu)
+# 2. Desain Tampilan Depan / Header Utama (Posisi Kredit Digeser ke Kanan Bawah)
 st.html("""
-<div style="text-align: center; margin-bottom: 20px; font-family: sans-serif;">
-<svg width="220" height="150" viewBox="0 0 220 150" fill="none" xmlns="http://w3.org" style="display: block; margin: 0 auto;">
+<div style="text-align: center; margin-bottom: 20px; font-family: sans-serif; position: relative;">
+<svg width="220" height="130" viewBox="0 0 220 150" fill="none" xmlns="http://w3.org" style="display: block; margin: 0 auto;">
 <path d="M20 125 C 40 125, 45 105, 55 105 C 65 105, 62 120, 52 122 C 45 123, 40 115, 48 110 C 53 107, 60 112, 58 116" stroke="#0288d1" stroke-width="3" stroke-linecap="round" fill="none"/>
 <path d="M15 130 C 50 130, 70 126, 100 126 C 140 126, 170 131, 205 130" stroke="#0288d1" stroke-width="2.5" stroke-linecap="round"/>
 <path d="M35 135 C 75 135, 95 132, 130 132 C 160 132, 180 136, 200 135" stroke="#0288d1" stroke-width="1.5" stroke-dasharray="4 4" stroke-linecap="round"/>
@@ -113,10 +116,12 @@ st.html("""
 <circle cx="70" cy="46" r="2" fill="white"/>
 </g>
 </svg>
-<h1 style="color: #03a9f4; margin-top: -10px; margin-bottom: 0; font-size: 34px; font-weight: bold; letter-spacing: 0.5px;">SeHe.AI</h1>
-<p style="font-size: 14px; color: #b4f4ff; font-weight: 600; margin-top: 3px; margin-bottom: 0; letter-spacing: 1px;">by rikoba</p>
+<div style="display: inline-block; text-align: left; position: relative;">
+    <h1 style="color: #03a9f4; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 0.5px; display: inline-block;">SeHe.AI</h1>
+    <span style="font-size: 11px; color: rgba(255, 255, 255, 0.4); font-style: italic; position: absolute; bottom: -8px; right: 2px; white-space: nowrap;">by rikoba</span>
 </div>
-""")
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
@@ -189,19 +194,3 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
 
         # Tampilkan jawaban AI di layar web dengan avatar ikan
         with st.chat_message("assistant", avatar="🐟"):
-            st.markdown(ai_response, unsafe_allow_html=True)
-            
-            # --- FITUR BARU: Menambahkan tombol download untuk jawaban AI yang baru ---
-            new_idx = len(st.session_state.messages)
-            st.download_button(
-                label="⬇️ Download sebagai HTML",
-                data=ai_response,
-                file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
-                mime="text/html",
-                key=f"dl_btn_{new_idx}"
-            )
-            
-        st.session_state.messages.append({"role": "assistant", "content": ai_response})
-
-    except Exception as e:
-        st.error(f"Terjadi kesalahan: {e}. Pastikan internet Anda aktif.")
