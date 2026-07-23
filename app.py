@@ -147,10 +147,10 @@ ai_config = types.GenerateContentConfig(
     tools=[{"google_search": {}}]
 )
 
-# 5. Inisialisasi Memori Obrolan (Chat Session) - UPGRADE TO PRO
+# 5. Inisialisasi Memori Obrolan (Chat Session) - KEMBALI KE FLASH AGAR AMAN DARI ERROR 429
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = st.session_state.gemini_client.chats.create(
-        model='gemini-2.5-pro',  # <-- Ganti menjadi pro
+        model='gemini-2.5-flash',  # <-- Ubah kembali ke flash di sini
         config=ai_config
     )
 
