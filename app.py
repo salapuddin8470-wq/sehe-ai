@@ -11,22 +11,25 @@ st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="üê
 st.markdown("""
 <style>
     /* ------------------------------------------------------------- */
-    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI   */
     /* ------------------------------------------------------------- */
-    header {visibility: hidden !important; height: 0px !important;}
-    footer {visibility: hidden !important;}
-    .viewerBadge_link__1S137 {display: none !important;}
-    [data-testid="stStatusWidget"] {visibility: hidden !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    
-    /* Mengurangi ruang kosong (padding) atas agar tata letak rapat */
-    .block-container {
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
-        max-width: 1000px !important;
-        position: relative;
-        z-index: 2;
-    }
+/* MENYEMBUNYIKAN LOGO MERAH TANPA MENGGANGGU APP MANAGER ADMIN  */
+/* ------------------------------------------------------------- */
+header {visibility: hidden !important; height: 0px !important;}
+footer {visibility: hidden !important;}
+[data-testid="stDecoration"] {display: none !important;}
+
+/* HANYA MENYEMBUNYIKAN LOGO STREAMLIT MERAH DI HP ORANG LAIN */
+.viewerBadge_link__1S137, 
+[data-testid="stViewerBadge"], 
+a[href*="streamlit.io"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0px !important;
+}
+
+/* CATATAN: Kode [data-testid="stStatusWidget"] sengaja DIHAPUS */
+/* agar tombol "Manage app" di HP Anda tetap muncul normal. */
 
     /* Import Font Premium */
     @import url('https://googleapis.com');
