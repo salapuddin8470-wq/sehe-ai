@@ -5,6 +5,31 @@ import os
 
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
+# Custom CSS untuk tampilan premium lautan, glassmorphism, dan animasi
+st.markdown("""
+<style>
+    /* ------------------------------------------------------------- */
+    /* MENYEMBUNYIKAN LOGO GITHUB & HEADER BAWAAN STREAMLIT          */
+    /* ------------------------------------------------------------- */
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    .viewerBadge_link__1S137 {display: none !important;}
+    [data-testid="stStatusWidget"] {visibility: hidden !important;}
+    
+    /* Import Font Premium */
+    @import url('https://googleapis.com');
+    
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* Tema Dasar & Gradient Lautan */
+    .stApp {
+        background: linear-gradient(135deg, #0f172a 0%, #0288d1 50%, #006064 100%);
+        background-attachment: fixed;
+    }
+    
+    /* ... sisa kode CSS Anda yang lain ... */
+</style>
+""", unsafe_allow_html=True)
 
 # 2. Desain Tampilan Depan / Header Utama (Versi html Murni Tanpa Bug Kotak Abu-abu)
 st.html("""
