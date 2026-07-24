@@ -93,11 +93,11 @@ st.html("""
 </div>
 """)
 # Tombol Reset diletakkan di halaman utama agar terhindar dari pemblokiran CSS Sidebar
-col_reset1, col_reset2, col_reset3 = st.columns([1, 2, 1])
+col_reset1, col_reset2, col_reset3 = st.columns([1, 2, 1]) # Diatur proporsinya agar rapi di tengah
 with col_reset2:
     if st.button("🗑️ Bersihkan Riwayat & Mulai Chat Baru", use_container_width=True):
-        st.session_state.messages = []
-        st.clear_cache()
+        st.session_state.messages = [] # Mengosongkan memori chat
+        st.cache_data.clear()          # MENGGUNAKAN FUNGSI CACHE YANG BENAR
         st.rerun()
 st.divider()
 
