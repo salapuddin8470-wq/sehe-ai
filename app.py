@@ -202,9 +202,18 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     st.chat_message("user", avatar="👤").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Kirim pertanyaan menggunakan metode Chat Session agar riwayat diingat oleh AI
+ 
+        # Kirim pertanyaan menggunakan metode Chat Session dengan pembatasan memori
     try:
         with st.spinner("SeHe.AI sedang mengarungi lautan data..."):
+            # Jika riwayat pesan sudah lebih dari 10, bersihkan sebagian agar hemat kuota token (Anti Error 429)
+            if len(st.session_state.messages) > 10:
+                # Mempertahankan instruksi utama tapi menyegarkan sesi memori baru
+                st.session_state.chat_session = st.session_state.gemini_client.chats.create(
+                    model='gemini-2.5-flash',
+                    config=ai_config
+                )
+            
             response = st.session_state.chat_session.send_message(prompt)
             ai_response = response.text
 
