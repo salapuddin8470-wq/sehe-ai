@@ -190,4 +190,4 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                 label="⬇️ Download sebagai HTML",
                 data=ai_response,
                 file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
-                mime="text/html",key=f"dl_btn_{new_idx}")st.session_state.messages.append({"role": "assistant", "content": ai_response})else:st.error("Gagal mendapatkan respons dari server Google AI Studio. Silakan coba kirim ulang pesan Anda.")
+                mime="text/html",key=f"dl_btn_{new_idx}")st.session_state.messages.append({"role": "assistant", "content": ai_response})else:st.error
