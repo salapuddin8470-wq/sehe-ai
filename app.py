@@ -190,16 +190,4 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                 label="⬇️ Download sebagai HTML",
                 data=ai_response,
 
-                file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
-                mime="text/html",
-                key=f"dl_btn_{new_idx}"
-            )
-            
-        st.session_state.messages.append({"role": "assistant", "content": ai_response})
-
-    except Exception as e:
-        # Jika kuota benar-benar habis, berikan pesan pemberitahuan yang ramah kepada nelayan/guru
-        if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-            st.error("⚠️ Trafik server sedang padat. Google membatasi akses gratis sementara. Mohon tunggu 30 detik sebelum mengirim pesan berikutnya.")
-        else:
-            st.error(f"Terjadi kesalahan: {e}. Pastikan internet Anda aktif.")
+                file_name=f"Dokumen_SeHe_AI_{new_idx}.html",mime="text/html",key=f"dl_btn_{new_idx}")st.session_state.messages.append({"role": "assistant", "content": ai_response})else:st.error("Gagal mendapatkan respons dari server Google AI Studio. Silakan coba kirim ulang pesan Anda.")
