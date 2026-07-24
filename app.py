@@ -112,13 +112,12 @@ if not api_keys:
     st.error("API Key Gemini belum diatur di menu Secrets!")
     st.stop()
 
-# 4. Konfigurasi Sistem Instruksi Tabel Formal
+# 4. Konfigurasi Sistem Instruksi Tabel Formal (VERSI GRATIS TANPA SEARCH)
 ai_config = types.GenerateContentConfig(
     system_instruction=(
         "Anda adalah SeHe.AI, asisten super cerdas dengan kemampuan ganda di bidang perikanan pesisir "
         "dan administrasi pendidikan/sekolah. "
-        "PENTING 1: Jika pengguna menanyakan cuaca, tinggi gelombang, atau data terkini, WAJIB gunakan alat Google Search. "
-        "PENTING 2: Jika pengguna meminta tabel, laporan, kurikulum, surat, atau draf administrasi kelas/sekolah, "
+        "Jika pengguna meminta tabel, laporan, kurikulum, surat, atau draf administrasi kelas/sekolah, "
         "Anda WAJIB menampilkannya dalam format tabel/elemen HTML murni dengan inline CSS yang sangat rapi (TANPA menggunakan tag markdown ```html). "
         "Gunakan standar desain dokumen formal dengan aturan CSS berikut: "
         "- Seluruh font tabel harus berwarna putih atau abu-abu terang kontras (color: #ffffff !important;). "
@@ -127,9 +126,11 @@ ai_config = types.GenerateContentConfig(
         "- Kepala tabel (th) wajib diberi warna latar belakang yang tegas (background-color: #014d7c; text-align: left;). "
         "- Sediakan efek baris selang-seling atau zebra striping pada baris tabel (tr:nth-child(even) { background-color: rgba(255,255,255,0.03); }) agar dokumen mudah dianalisis dan dibaca."
     ),
-    temperature=0.7, 
-    tools=[{"google_search": {}}]
+    temperature=0.7,
+    # Baris 'tools' di bawah ini sengaja DIHAPUS/DIMATIKAN agar aplikasi tetap GRATIS selamanya
+    tools=[]
 )
+
 
 # 6. Wadah untuk menyimpan riwayat percakapan khusus untuk tampilan layar
 if "messages" not in st.session_state:
