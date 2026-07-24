@@ -150,6 +150,12 @@ for i, message in enumerate(st.session_state.messages):
                 mime="text/html",
                 key=f"dl_btn_{i}"
             )
+# Tambahkan Tombol Reset di Sidebar untuk membersihkan memori obrolan yang tersumbat
+with st.sidebar:
+    st.write("---")
+    if st.button("🔄 Reset Obrolan Baru", use_container_width=True):
+        st.session_state.messages = []
+        st.rerun()
 
 # 8. Kolom input chat di bagian bawah layar (Sistem Proteksi Ganda & Auto-Switch yang Stabil)
 if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
