@@ -196,46 +196,43 @@ for i, message in enumerate(st.session_state.messages):
                 key=f"dl_btn_{i}"
             )
 
-# 8. Kolom input chat di bagian bawah layar
+# 8. Kolom input chat di bagian bawah layar (VERSI OPTIMASI ANTI-ERROR 429)
 if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     # Tampilkan pesan yang Anda ketik ke layar
     st.chat_message("user", avatar="👤").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
- 
-        # Kirim pertanyaan menggunakan metode Chat Session dengan pembatasan memori
+    # Kirim pertanyaan langsung tanpa menumpuk beban riwayat di server (Sistem Ringan)
     try:
         with st.spinner("SeHe.AI sedang mengarungi lautan data..."):
-            # Jika riwayat pesan sudah lebih dari 10, bersihkan sebagian agar hemat kuota token (Anti Error 429)
-            if len(st.session_state.messages) > 10:
-                # Mempertahankan instruksi utama tapi menyegarkan sesi memori baru
-                st.session_state.chat_session = st.session_state.gemini_client.chats.create(
-                    model='gemini-2.5-flash',
-                    config=ai_config
-                )
-            
-            response = st.session_state.chat_session.send_message(prompt)
+            # PERBAIKAN UTAMA: Menggunakan metode generate_content secara mandiri 
+            # untuk menghindari penumpukan beban Token Per Menit (TPM) di Free Tier
+            response = st.session_state.gemini_client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config=ai_config
+            )
             ai_response = response.text
 
         # Tampilkan jawaban AI di layar web dengan avatar ikan
         with st.chat_message("assistant", avatar="🐟"):
             st.markdown(ai_response, unsafe_allow_html=True)
             
-
             # --- FITUR DOWNLOAD: Menambahkan tombol download untuk jawaban AI yang baru ---
             new_idx = len(st.session_state.messages)
             st.download_button(
                 label="⬇️ Download sebagai HTML",
-
                 data=ai_response,
                 file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
                 mime="text/html",
                 key=f"dl_btn_{new_idx}"
             )
             
-
-            
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
 
     except Exception as e:
-        st.error(f"Terjadi kesalahan: {e}. Pastikan internet Anda aktif.")
+        # Jika kuota benar-benar habis, berikan pesan pemberitahuan yang ramah kepada nelayan/guru
+        if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+            st.error("⚠️ Trafik server sedang padat. Google membatasi akses gratis sementara. Mohon tunggu 30 detik sebelum mengirim pesan berikutnya.")
+        else:
+            st.error(f"Terjadi kesalahan: {e}. Pastikan internet Anda aktif.")
