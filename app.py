@@ -155,14 +155,14 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
 
     ai_response = None
     
-            # Perulangan otomatis mencoba setiap API Key yang terdaftar jika terjadi Error 429
+                # Perulangan otomatis mencoba setiap API Key yang terdaftar jika terjadi Error 429
     for idx, current_key in enumerate(api_keys):
         try:
             with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1})..."):
                 temp_client = genai.Client(api_key=current_key)
                 response = temp_client.models.generate_content(
-                    # Cukup ubah parameter nama model ke versi produksi aktif berikut:
-                    model='gemini-2.5-flash',
+                    # UBAH BARIS INI MENJADI GEMINI-2.0-FLASH
+                    model='gemini-2.0-flash',
                     contents=prompt,
                     config=ai_config
                 )
