@@ -186,8 +186,15 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             st.markdown(ai_response, unsafe_allow_html=True)
             
             new_idx = len(st.session_state.messages)
+                        # --- Potongan Kode yang Benar & Sudah Diatur Rapi ---
             st.download_button(
                 label="⬇️ Download sebagai HTML",
                 data=ai_response,
                 file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
-                mime="text/html",key=f"dl_btn_{new_idx}")st.session_state.messages.append({"role": "assistant", "content": ai_response})else:st.error
+                mime="text/html",
+                key=f"dl_btn_{new_idx}"
+            )
+            
+        st.session_state.messages.append({"role": "assistant", "content": ai_response})
+    else:
+        st.error("Gagal mendapatkan respons dari server Google AI Studio. Silakan coba kirim ulang pesan Anda.")
