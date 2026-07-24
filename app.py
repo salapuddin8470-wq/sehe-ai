@@ -158,14 +158,14 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     # Perulangan otomatis mencoba setiap API Key yang terdaftar jika terjadi Error 429
     for idx, current_key in enumerate(api_keys):
         try:
-        with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1})..."):
-        temp_client = genai.Client(api_key=current_key)
-        response = temp_client.models.generate_content(
-        # UBAH BARIS INI: dari 'gemini-2.5-flash' ke 'gemini-1.5-flash'
-        model='gemini-1.5-flash', 
-        contents=prompt,
-        config=ai_config
-        ) 
+            with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1})..."):
+                 temp_client = genai.Client(api_key=current_key)
+                 response = temp_client.models.generate_content(
+                 # UBAH BARIS INI: dari 'gemini-2.5-flash' ke 'gemini-1.5-flash'
+                 model='gemini-1.5-flash', 
+                 contents=prompt,
+                 config=ai_config
+                 ) 
                 if response and hasattr(response, 'text'):
                     ai_response = response.text
                     break 
