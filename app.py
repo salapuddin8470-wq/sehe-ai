@@ -177,7 +177,8 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
                 temp_client = genai.Client(api_key=current_key)
                 response = temp_client.models.generate_content(
-                    model='gemini-2.0-flash',
+                    # GANTI MENJADI MODEL TERBARU YANG STABIL & GRATIS BERIKUT:
+                    model='gemini-2.5-flash-lite',
                     contents=prompt,
                     config=ai_config
                 )
@@ -187,13 +188,12 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                     break  # Berhasil mendapatkan jawaban, keluar dari perulangan kunci
         except Exception as e:
             last_error_msg = str(e)
-            # Jika ini bukan kunci terakhir, abaikan error dan langsung coba kunci berikutnya
             if idx < len(api_keys) - 1:
                 continue
             else:
-                # Jika SEMUA kunci sudah dicoba dan gagal, baru tampilkan pesan peringatan
-                ai_response = "⚠️ Trafik server sedang sangat padat di seluruh jalur kunci gratis Anda. Mohon tunggu 30 detik sebelum mengirim pesan berikutnya."
-
+                # Berikan respons error, tetapi jangan simpan ke session state agar tidak mengunci layar selamanya
+                st.error("⚠️ Seluruh jalur kunci gratis Anda sedang padat. Silakan klik tombol 'Bersihkan Riwayat' di atas dan coba kirim ulang pesan Anda.")
+                ai_response = None
     # Tampilkan jawaban akhir di layar web dengan avatar ikan
     if ai_response is not None:
         with st.chat_message("assistant", avatar="🐟"):
