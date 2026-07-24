@@ -99,15 +99,73 @@ st.components.v1.html("""
                 statusKoneksi.style.setProperty('display', 'none', 'important');
             }
             
-            // Sembunyikan ikon mahkota merah (Hosted with Streamlit)
-            const mahkotaMerah = appToolbar.querySelector('div[data-testid="stViewerBadge"]');
-            if (mahkotaMerah) {
-                mahkotaMerah.style.setProperty('display', 'none', 'important');
-            }
-        }
+import streamlit as st
+from google import genai
+from google.genai import types
+import os
+
+# 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
+st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
+
+# Custom CSS Premium, Ringan, Minimalis & Kontras Tinggi (Anti Tulisan Samar)
+st.markdown("""
+<style>
+    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI */
+    header {visibility: hidden !important; height: 0px !important;}
+    footer {visibility: hidden !important;}
+    .viewerBadge_link__1S137 {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    
+    /* MENYEMBUNYIKAN KEDUA IKON MERAH DI HP ORANG LAIN */
+    [data-testid="stViewerBadge"], .viewerBadge_container__1S137, a[href*="streamlit.io"] {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important; width: 0px !important;
+    }
+    [data-testid="stConnectionStatus"], .stConnectionStatus, div[class*="stConnectionStatus"] {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important;
     }
     
-    // Jalankan pembersihan berulang untuk memastikan komponen hancur saat render selesai
+    .block-container {
+        padding-top: 2rem !important; padding-bottom: 2rem !important; max-width: 1000px !important; position: relative; z-index: 2;
+    }
+    @import url('https://googleapis.com');
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    .stApp p, .stApp li, .stApp span, .stApp div:not([data-testid="stChatInput"]), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+        color: #ffffff !important;
+    }
+    .stApp {
+        background: linear-gradient(135deg, #04080f 0%, #01243f 50%, #001417 100%) !important; background-attachment: fixed !important; overflow-x: hidden;
+    }
+    [data-testid="stSidebar"] {
+        background: rgba(4, 8, 15, 0.85) !important; backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.05); z-index: 3;
+    }
+    .stChatMessage {
+        background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 12px !important; margin-bottom: 12px !important;
+    }
+    [data-testid="stChatMessageContent"] { color: #ffffff !important; }
+    
+    [data-testid="stChatInput"] {
+        border-radius: 12px !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; background-color: #ffffff !important; backdrop-filter: blur(10px);
+    }
+    [data-testid="stChatInput"] textarea { color: #0f172a !important; font-weight: 500 !important; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.2); border-radius: 10px; }
+</style>
+""", unsafe_allow_html=True)
+
+# JAVASCRIPT INJEKTOR: PEMUSNAH LOGO MERAH UNTUK USER UMUM
+st.components.v1.html("""
+<script>
+    function hapusElemenMerah() {
+        const appToolbar = window.parent.document.querySelector('div[data-testid="stStatusWidget"]');
+        if (appToolbar) {
+            const statusKoneksi = appToolbar.querySelector('div[data-testid="stConnectionStatus"]');
+            if (statusKoneksi) statusKoneksi.style.setProperty('display', 'none', 'important');
+            const mahkotaMerah = appToolbar.querySelector('div[data-testid="stViewerBadge"]');
+            if (mahkotaMerah) mahkotaMerah.style.setProperty('display', 'none', 'important');
+        }
+    }
     setInterval(hapusElemenMerah, 500);
 </script>
 """, height=0, width=0)
@@ -136,21 +194,22 @@ st.html("""
 
 st.divider()
 
-# 3. Membaca API Key secara aman dari sistem Secrets Streamlit
-if "GEMINI_API_KEY" in st.secrets:
-    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
-else:
-    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+# 3. Membaca Beberapa Kunci API Secara Aman (Sistem Cadangan)
+api_keys = []
+if "GEMINI_API_KEY_1" in st.secrets and st.secrets["GEMINI_API_KEY_1"]:
+    api_keys.append(st.secrets["GEMINI_API_KEY_1"])
+if "GEMINI_API_KEY_2" in st.secrets and st.secrets["GEMINI_API_KEY_2"]:
+    api_keys.append(st.secrets["GEMINI_API_KEY_2"])
 
-if not GEMINI_API_KEY:
+# Jika memakai format lama (sebagai antisipasi cadangan)
+if not api_keys and "GEMINI_API_KEY" in st.secrets:
+    api_keys.append(st.secrets["GEMINI_API_KEY"])
+
+if not api_keys:
     st.error("API Key Gemini belum diatur di menu Secrets!")
     st.stop()
 
-# --- Menyimpan Client di session_state agar koneksi tidak terputus ---
-if "gemini_client" not in st.session_state:
-    st.session_state.gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-
-# 4. Konfigurasi Karakter (Format Tabel Administrasi Formal)
+# 4. Konfigurasi Sistem Instruksi Tabel Formal (Nomor 5)
 ai_config = types.GenerateContentConfig(
     system_instruction=(
         "Anda adalah SeHe.AI, asisten super cerdas dengan kemampuan ganda di bidang perikanan pesisir "
@@ -169,13 +228,6 @@ ai_config = types.GenerateContentConfig(
     tools=[{"google_search": {}}]
 )
 
-# 5. Inisialisasi Memori Obrolan (Chat Session) menggunakan model Flash yang stabil
-if "chat_session" not in st.session_state:
-    st.session_state.chat_session = st.session_state.gemini_client.chats.create(
-        model='gemini-2.5-flash',
-        config=ai_config
-    )
-
 # 6. Wadah untuk menyimpan riwayat percakapan khusus untuk tampilan layar
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -186,7 +238,6 @@ for i, message in enumerate(st.session_state.messages):
     with st.chat_message(message["role"], avatar=avatar_icon):
         st.markdown(message["content"], unsafe_allow_html=True)
         
-        # --- FITUR DOWNLOAD: Menambahkan tombol download untuk setiap jawaban riwayat AI ---
         if message["role"] == "assistant":
             st.download_button(
                 label="⬇️ Download sebagai HTML",
@@ -196,31 +247,46 @@ for i, message in enumerate(st.session_state.messages):
                 key=f"dl_btn_{i}"
             )
 
-# 8. Kolom input chat di bagian bawah layar (VERSI OPTIMASI ANTI-ERROR 429)
+# 8. Kolom input chat di bagian bawah layar (Sistem Proteksi Ganda & Auto-Switch)
 if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
-    # Tampilkan pesan yang Anda ketik ke layar
     st.chat_message("user", avatar="👤").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Kirim pertanyaan langsung tanpa menumpuk beban riwayat di server (Sistem Ringan)
-    try:
-        with st.spinner("SeHe.AI sedang mengarungi lautan data..."):
-            # PERBAIKAN UTAMA: Menggunakan metode generate_content secara mandiri 
-            # untuk menghindari penumpukan beban Token Per Menit (TPM) di Free Tier
-            response = st.session_state.gemini_client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=prompt,
-                config=ai_config
-            )
-            ai_response = response.text
+    ai_response = None
+    
+    # Looping otomatis mencoba setiap API Key yang terdaftar jika terjadi Error 429
+    for idx, current_key in enumerate(api_keys):
+        try:
+            with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1})..."):
+                # Inisialisasi client secara dinamis berdasarkan kunci aktif
+                temp_client = genai.Client(api_key=current_key)
+                response = temp_client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=prompt,
+                    config=ai_config
+                )
+                ai_response = response.text
+                break # Berhasil mendapatkan jawaban, langsung keluar dari loop kunci
+        except Exception as e:
+            # Jika kunci ini limit (429), lanjutkan mencoba kunci cadangan berikutnya di dalam list
+            if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                if idx < len(api_keys) - 1:
+                    continue # Coba kunci berikutnya
+                else:
+                    # Semua kunci habis limit harian
+                    ai_response = "⚠️ Trafik server sedang sangat padat di seluruh jalur kunci gratis Anda. Mohon tunggu 30 detik sebelum mengirim pesan berikutnya."
+            else:
+                ai_response = f"Terjadi kesalahan sistem: {e}. Pastikan internet Anda aktif."
+                break
 
-        # Tampilkan jawaban AI di layar web dengan avatar ikan
+    # Tampilkan jawaban akhir di layar web dengan avatar ikan
+    if ai_response:
         with st.chat_message("assistant", avatar="🐟"):
             st.markdown(ai_response, unsafe_allow_html=True)
             
-            # --- FITUR DOWNLOAD: Menambahkan tombol download untuk jawaban AI yang baru ---
             new_idx = len(st.session_state.messages)
             st.download_button(
+
                 label="⬇️ Download sebagai HTML",
                 data=ai_response,
                 file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
