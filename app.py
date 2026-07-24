@@ -101,6 +101,8 @@ if "GEMINI_API_KEY_1" in st.secrets and st.secrets["GEMINI_API_KEY_1"]:
     api_keys.append(st.secrets["GEMINI_API_KEY_1"])
 if "GEMINI_API_KEY_2" in st.secrets and st.secrets["GEMINI_API_KEY_2"]:
     api_keys.append(st.secrets["GEMINI_API_KEY_2"])
+if "GEMINI_API_KEY_3" in st.secrets and st.secrets["GEMINI_API_KEY_3"]:
+    api_keys.append(st.secrets["GEMINI_API_KEY_3"]) # Jalur cadangan ketiga aktif!
 
 # Jika memakai format lama (antisipasi fallback)
 if not api_keys and "GEMINI_API_KEY" in st.secrets:
