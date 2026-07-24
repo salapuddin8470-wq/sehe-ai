@@ -92,7 +92,13 @@ st.html("""
 </div>
 </div>
 """)
-
+# Tombol Reset diletakkan di halaman utama agar terhindar dari pemblokiran CSS Sidebar
+col_reset1, col_reset2, col_reset3 = st.columns([1, 2, 1])
+with col_reset2:
+    if st.button("🗑️ Bersihkan Riwayat & Mulai Chat Baru", use_container_width=True):
+        st.session_state.messages = []
+        st.clear_cache()
+        st.rerun()
 st.divider()
 
 # 3. Membaca Beberapa Kunci API Secara Aman (Sistem Cadangan)
