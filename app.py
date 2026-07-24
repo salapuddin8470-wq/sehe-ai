@@ -156,14 +156,14 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     ai_response = None
+    last_error_msg = ""
     
-                # Perulangan otomatis mencoba setiap API Key yang terdaftar jika terjadi Error 429
+    # Perulangan otomatis mencoba setiap API Key yang terdaftar secara tangguh
     for idx, current_key in enumerate(api_keys):
         try:
-            with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1})..."):
+            with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
                 temp_client = genai.Client(api_key=current_key)
                 response = temp_client.models.generate_content(
-                    # UBAH BARIS INI MENJADI GEMINI-2.0-FLASH
                     model='gemini-2.0-flash',
                     contents=prompt,
                     config=ai_config
@@ -171,18 +171,15 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                 
                 if response and hasattr(response, 'text'):
                     ai_response = response.text
-                    break 
+                    break  # Berhasil mendapatkan jawaban, keluar dari perulangan kunci
         except Exception as e:
-
-            err_str = str(e)
-            if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
-                if idx < len(api_keys) - 1:
-                    continue 
-                else:
-                    ai_response = "⚠️ Trafik server sedang sangat padat di seluruh jalur kunci gratis Anda. Mohon tunggu 30 detik sebelum mengirim pesan berikutnya."
+            last_error_msg = str(e)
+            # Jika ini bukan kunci terakhir, abaikan error dan langsung coba kunci berikutnya
+            if idx < len(api_keys) - 1:
+                continue
             else:
-                ai_response = f"Terjadi kesalahan sistem: {err_str}. Pastikan internet Anda aktif."
-                break
+                # Jika SEMUA kunci sudah dicoba dan gagal, baru tampilkan pesan peringatan
+                ai_response = "⚠️ Trafik server sedang sangat padat di seluruh jalur kunci gratis Anda. Mohon tunggu 30 detik sebelum mengirim pesan berikutnya."
 
     # Tampilkan jawaban akhir di layar web dengan avatar ikan
     if ai_response is not None:
@@ -190,7 +187,6 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             st.markdown(ai_response, unsafe_allow_html=True)
             
             new_idx = len(st.session_state.messages)
-                        # --- Potongan Kode yang Benar & Sudah Diatur Rapi ---
             st.download_button(
                 label="⬇️ Download sebagai HTML",
                 data=ai_response,
@@ -201,4 +197,4 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
     else:
-        st.error("Gagal mendapatkan respons dari server Google AI Studio. Silakan coba kirim ulang pesan Anda.")
+        st.error(f"Gagal mendapatkan respons dari server Google AI Studio. Detail error terakhir: {last_error_msg}")
