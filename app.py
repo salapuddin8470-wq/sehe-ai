@@ -177,8 +177,8 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
                 temp_client = genai.Client(api_key=current_key)
                 response = temp_client.models.generate_content(
-                    # GANTI MENJADI MODEL TERBARU YANG STABIL & GRATIS BERIKUT:
-                    model='gemini-2.5-flash-lite',
+                    # GUNAKAN MODEL PRODUKSI RESMI & AKTIF BERIKUT:
+                    model='gemini-2.5-flash',
                     contents=prompt,
                     config=ai_config
                 )
