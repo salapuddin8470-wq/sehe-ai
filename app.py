@@ -1,4 +1,4 @@
-import streamlit as st
+    import streamlit as st
 from google import genai
 from google.genai import types
 import os
@@ -9,184 +9,25 @@ st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="�
 # Custom CSS Premium, Ringan, Minimalis & Kontras Tinggi (Anti Tulisan Samar)
 st.markdown("""
 <style>
-    /* ------------------------------------------------------------- */
-    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI   */
-    /* ------------------------------------------------------------- */
+    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI */
     header {visibility: hidden !important; height: 0px !important;}
     footer {visibility: hidden !important;}
     .viewerBadge_link__1S137 {display: none !important;}
     [data-testid="stDecoration"] {display: none !important;}
     
-    /* Mengurangi ruang kosong (padding) atas agar tata letak rapat */
-    .block-container {
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
-        max-width: 1000px !important;
-        position: relative;
-        z-index: 2;
+    /* MENYEMBUNYIKAN KEDUA IKON MERAH DI HP ORANG LAIN */
+    [data-testid="stViewerBadge"], .viewerBadge_container__1S137, a[href*="streamlit.io"] {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important; width: 0px !important;
     }
-
+    [data-testid="stConnectionStatus"], .stConnectionStatus, div[class*="stConnectionStatus"] {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important;
+    }
+    
+    .block-container {
+        padding-top: 2rem !important; padding-bottom: 2rem !important; max-width: 1000px !important; position: relative; z-index: 2;
+    }
+    
     /* Import Font Premium */
-    @import url('https://googleapis.com');
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-    
-    /* ------------------------------------------------------------- */
-    /* MEMAKSA SEMUA TEKS BERWARNA PUTIH TERANG (KONTRAS TINGGI)     */
-    /* ------------------------------------------------------------- */
-    .stApp p, .stApp li, .stApp span, .stApp div:not([data-testid="stChatInput"]), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
-        color: #ffffff !important;
-    }
-    
-    /* LATAR BELAKANG LAUTAN DEEP SEA */
-    .stApp {
-        background: linear-gradient(135deg, #04080f 0%, #01243f 50%, #001417 100%) !important;
-        background-attachment: fixed !important;
-        overflow-x: hidden;
-    }
-    
-    /* NAVIGASI & SIDEBAR MINIMALIS (GLASSMORPHISM) */
-    [data-testid="stSidebar"] {
-        background: rgba(4, 8, 15, 0.85) !important;
-        backdrop-filter: blur(20px);
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
-        z-index: 3;
-    }
-    
-    /* AREA KOTAK PESAN PERCAKAPAN & TEKS DI DALAMNYA */
-    .stChatMessage {
-        background: rgba(255, 255, 255, 0.05) !important;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 12px !important;
-        margin-bottom: 12px !important;
-    }
-    
-    [data-testid="stChatMessageContent"] {
-        color: #ffffff !important;
-    }
-    
-    /* KOTAK INPUT UTAMA MELAYANG & WARNA HURUF SAAT MENGETIK CHAT */
-    [data-testid="stChatInput"] {
-        border-radius: 12px !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        background-color: #ffffff !important;
-        backdrop-filter: blur(10px);
-    }
-    
-    [data-testid="stChatInput"] textarea {
-        color: #0f172a !important; 
-        font-weight: 500 !important;
-    }
-    
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.2); border-radius: 10px; }
-</style>
-""", unsafe_allow_html=True)
-
-# -------------------------------------------------------------
-# JAVASCRIPT INJEKTOR MUTAKHIR: PEMUSNAH DUA IKON MERAH USER GENERAL
-# -------------------------------------------------------------
-st.components.v1.html("""
-<script>
-    function hapusElemenMerah() {
-        // Cari elemen penampung utama status koneksi dan mahkota merah
-        const appToolbar = window.parent.document.querySelector('div[data-testid="stStatusWidget"]');
-        if (appToolbar) {
-            // Sembunyikan ikon status koneksi jika ada
-            const statusKoneksi = appToolbar.querySelector('div[data-testid="stConnectionStatus"]');
-            if (statusKoneksi) {
-                statusKoneksi.style.setProperty('display', 'none', 'important');
-            }
-            
-import streamlit as st
-from google import genai
-from google.genai import types
-import os
-
-# 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
-st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
-
-# Custom CSS Premium, Ringan, Minimalis & Kontras Tinggi (Anti Tulisan Samar)
-st.markdown("""
-<style>
-    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI */
-    header {visibility: hidden !important; height: 0px !important;}
-    footer {visibility: hidden !important;}
-    .viewerBadge_link__1S137 {display: none !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    
-    /* MENYEMBUNYIKAN KEDUA IKON MERAH DI HP ORANG LAIN */
-    [data-testid="stViewerBadge"], .viewerBadge_container__1S137, a[href*="streamlit.io"] {
-        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important; width: 0px !important;
-    }
-    [data-testid="stConnectionStatus"], .stConnectionStatus, div[class*="stConnectionStatus"] {
-        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important;
-    }
-    
-    .block-container {
-        padding-top: 2rem !important; padding-bottom: 2rem !important; max-width: 1000px !important; position: relative; z-index: 2;
-    }
-    @import url('https://googleapis.com');
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
-    
-    .stApp p, .stApp li, .stApp span, .stApp div:not([data-testid="stChatInput"]), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
-        color: #ffffff !important;
-    }
-    .stApp {
-        background: linear-gradient(135deg, #04080f 0%, #01243f 50%, #001417 100%) !important; background-attachment: fixed !important; overflow-x: hidden;
-    }
-    [data-testid="stSidebar"] {
-        background: rgba(4, 8, 15, 0.85) !important; backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.05); z-index: 3;
-    }
-    .stChatMessage {
-        background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 12px !important; margin-bottom: 12px !important;
-    }
-    [data-testid="stChatMessageContent"] { color: #ffffff !important; }
-    
-    [data-testid="stChatInput"] {
-        border-radius: 12px !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; background-color: #ffffff !important; backdrop-filter: blur(10px);
-    }
-    [data-testid="stChatInput"] textarea { color: #0f172a !important; font-weight: 500 !important; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.2); border-radius: 10px; }
-</style>
-""", unsafe_allow_html=True)
-
-# JAVASCRIPT INJEKTOR: PEMUSNAH LOGO MERAH UNTUK USER UMUM
-st.components.v1.html("""
-<script>
-    function hapusElemenMerah() {
-        const appToolbar = window.parent.document.querySelector('div[data-testid="stStatusWidget"]');
-import streamlit as st
-from google import genai
-from google.genai import types
-import os
-
-# 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
-st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
-
-# Custom CSS Premium, Ringan, Minimalis & Kontras Tinggi (Anti Tulisan Samar)
-st.markdown("""
-<style>
-    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI */
-    header {visibility: hidden !important; height: 0px !important;}
-    footer {visibility: hidden !important;}
-    .viewerBadge_link__1S137 {display: none !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    
-    /* MENYEMBUNYIKAN KEDUA IKON MERAH DI HP ORANG LAIN */
-    [data-testid="stViewerBadge"], .viewerBadge_container__1S137, a[href*="streamlit.io"] {
-        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important; width: 0px !important;
-    }
-    [data-testid="stConnectionStatus"], .stConnectionStatus, div[class*="stConnectionStatus"] {
-        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important;
-    }
-    
-    .block-container {
-        padding-top: 2rem !important; padding-bottom: 2rem !important; max-width: 1000px !important; position: relative; z-index: 2;
-    }
     @import url('https://googleapis.com');
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
@@ -318,7 +159,6 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     for idx, current_key in enumerate(api_keys):
         try:
             with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1})..."):
-                # Perbaikan: Inisialisasi client secara eksplisit dan panggil sub-modul .models dengan benar
                 temp_client = genai.Client(api_key=current_key)
                 response = temp_client.models.generate_content(
                     model='gemini-2.5-flash',
@@ -326,32 +166,30 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                     config=ai_config
                 )
                 
-                # Pastikan respon teks dari server berhasil dibaca
                 if response and hasattr(response, 'text'):
                     ai_response = response.text
-                    break # Jawaban aman diperoleh, langsung hentikan loop kunci
+                    break 
         except Exception as e:
-            # Jika kunci ini limit (429), lanjutkan mencoba kunci cadangan berikutnya
             err_str = str(e)
             if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
                 if idx < len(api_keys) - 1:
-                    continue # Beralih otomatis ke API Key kedua
+                    continue 
                 else:
                     ai_response = "⚠️ Trafik server sedang sangat padat di seluruh jalur kunci gratis Anda. Mohon tunggu 30 detik sebelum mengirim pesan berikutnya."
             else:
                 ai_response = f"Terjadi kesalahan sistem: {err_str}. Pastikan internet Anda aktif."
                 break
 
-    # Tampilkan jawaban akhir di layar web dengan avatar ikan (Mencegah variabel kosong)
-    if ai_response:
+    # Tampilkan jawaban akhir di layar web dengan avatar ikan
+    if ai_response is not None:
         with st.chat_message("assistant", avatar="🐟"):
             st.markdown(ai_response, unsafe_allow_html=True)
             
             new_idx = len(st.session_state.messages)
             st.download_button(
-
                 label="⬇️ Download sebagai HTML",
                 data=ai_response,
+
                 file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
                 mime="text/html",
                 key=f"dl_btn_{new_idx}"
