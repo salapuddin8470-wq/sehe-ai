@@ -168,7 +168,53 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-# 8. Kolom input chat di bagian bawah layar (Sistem Proteksi Ganda & Auto-Switch yang Stabil)
+# =====================================================================
+# SINKRONISASI OTOMATIS FOLDER GOOGLE DRIVE KHUSUS SEHE.AI
+# =====================================================================
+def baca_data_bantuan_drive(prompt_user):
+    """Fungsi otomatis memindai berkas .txt di folder Google Drive Anda"""
+    referensi_drive = ""
+    try:
+        from googleapiclient.discovery import build
+        from google.oauth2.service_account import Credentials
+        
+        # Mengambil data kredensial akun robot dari Streamlit Secrets
+        info_kunci = dict(st.secrets["gcp_service_account"])
+        kredensial = Credentials.from_service_account_info(info_kunci)
+        
+        # Membuka koneksi resmi ke server Google Drive API v3
+        layanan = build('drive', 'v3', credentials=kredensial)
+        id_folder = st.secrets["DRIVE_FOLDER_ID"]
+        
+        # Meminta daftar berkas teks biasa (.txt) di dalam folder khusus
+        query = f"'{id_folder}' in parents and mimeType = 'text/plain' and trashed = false"
+        hasil = layanan.files().list(q=query, fields="files(id, name)").execute()
+        berkas_list = hasil.get('files', [])
+        
+        # Membaca isi tulisan di dalam setiap berkas teks yang ditemukan
+        for berkas in berkas_list:
+            id_berkas = berkas['id']
+            konten = layanan.files().get_media(fileId=id_berkas).execute()
+            teks_berkas = konten.decode('utf-8')
+            
+            # Memisahkan baris teks berdasarkan pembatas tanda pipa (|)
+            for baris in teks_berkas.splitlines():
+                if "|" in baris and not baris.strip().startswith("#"):
+                    kata_kunci, isi_informasi = baris.strip().split("|", 1)
+                    # Jika kata kunci ada dalam ketikan pertanyaan pengguna
+                    if kata_kunci.lower().strip() in prompt_user.lower():
+                        referensi_drive += f"\n[REFERENSI DRIVE - {berkas['name']}]: {isi_informasi.strip()}\n"
+                        
+    except Exception as e:
+        # Pengaman: Jika folder kosong atau gagal koneksi, sistem tidak akan crash
+        pass
+        
+    return referensi_drive
+
+
+# =====================================================================
+# 8. KOLOM INPUT CHAT UTAMA SEHE.AI (VERSI SINKRONISASI DRIVE JALUR KUNCI)
+# =====================================================================
 if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     st.chat_message("user", avatar="👤").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -181,10 +227,18 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
         try:
             with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
                 temp_client = genai.Client(api_key=current_key)
+                
+                # 1. JALANKAN PEMINDAIAN OTOMATIS KE FOLDER DRIVE ANDA
+                referensi_lokal = baca_data_bantuan_drive(prompt)
+                
+                # 2. SUNTIKKAN DATA BANTUAN SEBAGAI REFERENSI GEMINI (JIKA COCOK)
+                pesan_akhir = prompt
+                if referensi_lokal:
+                    pesan_akhir = f"{referensi_lokal}\n\nPertanyaan Pengguna: {prompt}"
+
                 response = temp_client.models.generate_content(
-                    # GUNAKAN MODEL PRODUKSI RESMI & AKTIF BERIKUT:
                     model='gemini-2.5-flash',
-                    contents=prompt,
+                    contents=pesan_akhir, # MENGGUNAKAN PESAN YANG SUDAH MEMBAWA DATA DRIVE
                     config=ai_config
                 )
                 
@@ -196,10 +250,10 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
             if idx < len(api_keys) - 1:
                 continue
             else:
-                # Berikan respons error, tetapi jangan simpan ke session state agar tidak mengunci layar selamanya
                 st.error("⚠️ Seluruh jalur kunci gratis Anda sedang padat. Silakan klik tombol 'Bersihkan Riwayat' di atas dan coba kirim ulang pesan Anda.")
                 ai_response = None
-        # Tampilkan jawaban akhir di layar web dengan avatar ikan
+
+    # Tampilkan jawaban akhir di layar web dengan avatar ikan
     if ai_response is not None:
         with st.chat_message("assistant", avatar="🐟"):
             # 1. Tampilkan konten utama AI di layar web Streamlit
