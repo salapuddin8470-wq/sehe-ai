@@ -236,11 +236,13 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                 if referensi_lokal:
                     pesan_akhir = f"{referensi_lokal}\n\nPertanyaan Pengguna: {prompt}"
 
-                response = temp_client.models.generate_content(
-                    model='gemini-2.5-flash',
-                    contents=pesan_akhir, # MENGGUNAKAN PESAN YANG SUDAH MEMBAWA DATA DRIVE
+                                response = temp_client.models.generate_content(
+                    # GANTI MENTARA KE MODEL LITE YANG SEPI TRAFIK BERIKUT:
+                    model='gemini-2.5-flash-lite',
+                    contents=pesan_akhir,
                     config=ai_config
                 )
+
                 
                 if response and hasattr(response, 'text'):
                     ai_response = response.text
