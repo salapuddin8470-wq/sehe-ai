@@ -243,7 +243,6 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                     config=ai_config
                 )
 
-                
                 if response and hasattr(response, 'text'):
                     ai_response = response.text
                     break  # Berhasil mendapatkan jawaban, keluar dari perulangan kunci
