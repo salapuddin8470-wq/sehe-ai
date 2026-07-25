@@ -236,7 +236,7 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                 if referensi_lokal:
                     pesan_akhir = f"{referensi_lokal}\n\nPertanyaan Pengguna: {prompt}"
 
-                                response = temp_client.models.generate_content(
+                response = temp_client.models.generate_content(
                     # GANTI MENTARA KE MODEL LITE YANG SEPI TRAFIK BERIKUT:
                     model='gemini-2.5-flash-lite',
                     contents=pesan_akhir,
