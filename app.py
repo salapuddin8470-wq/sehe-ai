@@ -222,31 +222,34 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
     ai_response = None
     last_error_msg = ""
     
-    # Perulangan otomatis mencoba setiap API Key yang terdaftar secara tangguh
+
+        # Perulangan otomatis mencoba setiap API Key yang terdaftar secara tangguh
     for idx, current_key in enumerate(api_keys):
         try:
             with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
                 temp_client = genai.Client(api_key=current_key)
                 
-                # 1. JALANKAN PEMINDAIAN OTOMATIS KE FOLDER DRIVE ANDA
-                referensi_lokal = baca_data_bantuan_drive(prompt)
+                # UBAH STRUKTUR LOGIKA DI SINI AGAR VARIABEL STABIL:
+                teks_tanya = str(prompt) # Mengunci teks ketikan pengguna ke variabel baru
                 
-                # 2. SUNTIKKAN DATA BANTUAN SEBAGAI REFERENSI GEMINI (JIKA COCOK)
-                pesan_akhir = prompt
+                # Jalankan pemindaian otomatis ke Drive menggunakan variabel baru yang stabil
+                referensi_lokal = baca_data_bantuan_drive(teks_tanya)
+                
+                # Jika kecocokan data ditemukan di Drive, gabungkan ke dalam pertanyaan Gemini
+                pesan_akhir = teks_tanya
                 if referensi_lokal:
-                    pesan_akhir = f"{referensi_lokal}\n\nPertanyaan Pengguna: {prompt}"
+                    pesan_akhir = f"{referensi_lokal}\n\nPertanyaan Pengguna: {teks_tanya}"
 
                 response = temp_client.models.generate_content(
-                    # GUNAKAN MODEL TERBARU RESMI 2026 YANG AKTIF BERIKUT:
                     model='gemini-3.1-flash-lite',
                     contents=pesan_akhir,
                     config=ai_config
                 )
-
-
+                
                 if response and hasattr(response, 'text'):
                     ai_response = response.text
                     break  # Berhasil mendapatkan jawaban, keluar dari perulangan kunci
+
         except Exception as e:
             last_error_msg = str(e)
             if idx < len(api_keys) - 1:
