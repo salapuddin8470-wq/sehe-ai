@@ -118,24 +118,29 @@ if not api_keys:
     st.error("API Key Gemini belum diatur di menu Secrets!")
     st.stop()
 
-# 4. Konfigurasi Sistem Instruksi Tabel Formal (VERSI GRATIS TANPA SEARCH)
+# 4. Konfigurasi Sistem Instruksi Tabel Formal (VERSI WARNA OTOMATIS PREMIUM)
 ai_config = types.GenerateContentConfig(
     system_instruction=(
         "Anda adalah SeHe.AI, asisten super cerdas dengan kemampuan ganda di bidang perikanan pesisir "
         "dan administrasi pendidikan/sekolah. "
-        "Jika pengguna meminta tabel, laporan, kurikulum, surat, atau draf administrasi kelas/sekolah, "
+        "TUGAS UTAMA: Jika pengguna meminta tabel, laporan, kurikulum, surat, atau draf administrasi, "
         "Anda WAJIB menampilkannya dalam format tabel/elemen HTML murni dengan inline CSS yang sangat rapi (TANPA menggunakan tag markdown ```html). "
-        "Gunakan standar desain dokumen formal dengan aturan CSS berikut: "
-        "- Seluruh font tabel harus berwarna putih atau abu-abu terang kontras (color: #ffffff !important;). "
-        "- Gunakan border tipis transparan elegan (border: 1px solid rgba(255,255,255,0.15);). "
-        "- Gunakan padding yang lega agar teks tidak mepet (padding: 10px 12px;). "
-        "- Kepala tabel (th) wajib diberi warna latar belakang yang tegas (background-color: #014d7c; text-align: left;). "
-        "- Sediakan efek baris selang-seling atau zebra striping pada baris tabel (tr:nth-child(even) { background-color: rgba(255,255,255,0.03); }) agar dokumen mudah dianalisis dan dibaca."
+        "ATURAN WARNA OTOMATIS (PSYCHOLOGY COLOR MATCHING): "
+        "- Untuk topik sekolah/pendidikan, gunakan tema hijau emerald (#0f5132) atau teal (#0f766e) pada kepala tabel (th). "
+        "- Untuk topik perikanan/laut/nelayan, gunakan tema biru samudra dalam (#032b4d) atau deep navy (#1e3a8a) pada kepala tabel (th). "
+        "- Untuk topik keuangan/bisnis/laporan umum, gunakan tema charcoal/hitam formal (#212529) atau slate (#334155). "
+        "STANDAR DESAIN DOKUMEN FORMAL WORD & WEB: "
+        "- Seluruh teks di dalam kepala tabel (th) WAJIB berwarna putih bersih (color: #ffffff !important;) dan tebal (font-weight: bold;). "
+        "- Gunakan border tipis elegan berwarna abu-abu transparan (border: 1px solid #cbd5e1;) di setiap sel (th dan td). "
+        "- Berikan padding yang lega agar teks nyaman dibaca (padding: 10px 14px;). "
+        "- Seluruh teks di dalam isi tabel (td) WAJIB berwarna gelap kontras seperti hitam (#000000) atau abu-abu gelap (#1e293b) "
+        "agar ketika file diunduh ke Microsoft Word, tulisannya langsung terbaca jelas di atas kertas putih. "
+        "- Sediakan efek baris selang-seling (zebra striping) dengan warna latar belakang abu-abu sangat tipis (background-color: #f8fafc;) pada baris genap."
     ),
-    temperature=0.7,
-    # Baris 'tools' di bawah ini sengaja DIHAPUS/DIMATIKAN agar aplikasi tetap GRATIS selamanya
+    temperature=0.6, # Diturunkan sedikit ke 0.6 agar AI lebih disiplin mengikuti format warna
     tools=[]
 )
+
 
 
 # 6. Wadah untuk menyimpan riwayat percakapan khusus untuk tampilan layar
@@ -194,20 +199,82 @@ if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
                 # Berikan respons error, tetapi jangan simpan ke session state agar tidak mengunci layar selamanya
                 st.error("⚠️ Seluruh jalur kunci gratis Anda sedang padat. Silakan klik tombol 'Bersihkan Riwayat' di atas dan coba kirim ulang pesan Anda.")
                 ai_response = None
-    # Tampilkan jawaban akhir di layar web dengan avatar ikan
+        # Tampilkan jawaban akhir di layar web dengan avatar ikan
     if ai_response is not None:
         with st.chat_message("assistant", avatar="🐟"):
+            # 1. Tampilkan konten utama AI di layar web Streamlit
             st.markdown(ai_response, unsafe_allow_html=True)
             
+            # 2. Proses enkripsi berkas HTML ke Base64 (Model 1: Warna Dinamis Mengikuti AI)
+            import base64
+            
+            # Kerangka MSO Word yang patuh pada inline-style warna buatan AI
+            html_wrapped = f"""
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                  xmlns:w='urn:schemas-microsoft-com:office:word' 
+                  xmlns='http://w3.org'>
+            <head>
+                <meta charset="utf-8">
+                <title>Dokumen SeHe AI</title>
+                <!--[if gte mso 9]>
+                <xml>
+                    <w:WordDocument>
+                        <w:View>Print</w:View>
+                        <w:Zoom>100</w:Zoom>
+                        <w:DoNotOptimizeForBrowser/>
+                    </w:WordDocument>
+                </xml>
+                <![endif]-->
+                <style>
+                    /* Aturan dasar kertas A4 Portrait untuk Microsoft Word */
+                    @page {{
+                        size: 21cm 29.7cm;
+                        margin: 2.54cm 2.54cm 2.54cm 2.54cm;
+                    }}
+                    body {{ 
+                        font-family: 'Segoe UI', Arial, sans-serif; 
+                        padding: 0px; 
+                        line-height: 1.5; 
+                        background-color: #ffffff;
+                        color: #000000; /* Warna dasar teks hitam agar kontras saat di Word */
+                    }}
+                    /* Pengaturan dasar tabel tanpa memaksakan warna kaku */
+                    table {{ 
+                        border-collapse: collapse; 
+                        width: 100%; 
+                        margin: 18px 0; 
+                    }}
+                    th, td {{ 
+                        border: 1px solid #cbd5e1; 
+                        padding: 8px 12px; 
+                    }}
+                </style>
+            </head>
+            <body>
+                {ai_response}
+            </body>
+            </html>
+            """
+            
+            # Enkripsi kode agar bisa diunduh instan tanpa reload halaman
+            b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
             new_idx = len(st.session_state.messages)
-            st.download_button(
-                label="⬇️ Download sebagai HTML",
-                data=ai_response,
-                file_name=f"Dokumen_SeHe_AI_{new_idx}.html",
-                mime="text/html",
-                key=f"dl_btn_{new_idx}"
-            )
+            
+            # 3. Tampilkan Dua Tombol Berjejer Estetis (Cetak PDF & Simpan HTML untuk Word)
+            st.markdown(f"""
+                <div class="action-buttons-container">
+                    <!-- Tombol Cetak / Jendela PDF -->
+                    <button class="btn-action btn-blue" onclick="window.print()">
+                        🖨️ Cetak / PDF
+                    </button>
+                    <!-- Tombol Unduh HTML yang Kompatibel dengan Desain Cerdas Word -->
+                    <a class="btn-action btn-green" href="data:text/html;base64,{b64_html}" download="Dokumen_SeHe_AI_{new_idx}.html">
+                        💾 Simpan .HTML
+                    </a>
+                </div>
+            """, unsafe_allow_html=True)
             
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
+
     else:
         st.error(f"Gagal mendapatkan respons dari server Google AI Studio. Detail error terakhir: {last_error_msg}")
