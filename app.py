@@ -514,7 +514,10 @@ if final_prompt:
                 st.markdown(ai_response, unsafe_allow_html=True)
                 
                 # Proses pembungkusan dokumen HTML formal MSO Word murni
-                html_wrapped = f"""
+                # =============================================================
+                # CARA PERBAIKAN: HAPUS HURUF 'f' DAN GUNAKAN .replace() AMAN
+                # =============================================================
+                html_wrapped = """
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' 
                       xmlns:w='urn:schemas-microsoft-com:office:word' 
                       xmlns='http://w3.org'>
@@ -531,37 +534,37 @@ if final_prompt:
                     </xml>
                     <![endif]-->
                     <style>
-                        @page {{
+                        @page {
                             size: 21cm 29.7cm;
                             margin: 2.54cm 2.54cm 2.54cm 2.54cm;
-                        }}
-                        body {{ 
+                        }
+                        body { 
                             font-family: 'Segoe UI', Arial, sans-serif; 
                             padding: 0px; 
                             line-height: 1.5; 
                             background-color: #ffffff;
                             color: #000000;
-                        }}
-                        table {{ 
+                        }
+                        table { 
                             border-collapse: collapse; 
                             width: 100%; 
                             margin: 18px 0; 
-                        }}
-                        th, td {{ 
+                        }
+                        th, td { 
                             border: 1px solid #cbd5e1; 
                             padding: 8px 12px; 
                         }}
                     </style>
                 </head>
                 <body>
-                    {ai_response}
+                    {KONTEN_AI_DISINI}
                 </body>
                 </html>
-                """
+                """.replace("{KONTEN_AI_DISINI}", ai_response) # Menyuntikkan teks aman tanpa merusak CSS
                 
                 b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
                 new_idx = len(st.session_state.messages)
-                
+
                 # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
                 st.markdown(f"""
                     <div class="action-buttons-container">
