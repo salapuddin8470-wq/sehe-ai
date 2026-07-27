@@ -412,28 +412,43 @@ if final_prompt:
         # Gabungkan teks pertanyaan utama pengguna ke paket pengiriman
         paket_konten.append(teks_tanya)
 
-        # Perulangan otomatis mencoba ketiga API Key secara bergantian jika terjadi Error 429
+        # Perulangan otomatis mencoba API Key dan cadangan model jika server sibuk / Error 429 / Error 503
         for idx, current_key in enumerate(api_keys):
-            try:
-                with st.spinner(f"SeHe.AI sedang membedah data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
-                    temp_client = genai.Client(api_key=current_key)
-                    response = temp_client.models.generate_content(
-                        model='gemini-2.5-flash',
-                        contents=paket_konten,
-                        config=ai_config
-                    )
-                    
-                    if response and hasattr(response, 'text'):
-                        ai_response = response.text
-                        break 
-            except Exception as e:
-                last_error_msg = str(e)
-                if "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
-                    if idx < len(api_keys) - 1:
-                        continue 
+            sukses_merespons = False
+            # Daftar model yang dicoba secara berurutan per API Key
+            daftar_model = ['gemini-2.5-flash', 'gemini-2.5-flash-8b']
+            
+            for target_model in daftar_model:
+                try:
+                    with st.spinner(f"SeHe.AI membedah data ({target_model} | Jalur {idx+1}/{len(api_keys)})..."):
+                        temp_client = genai.Client(api_key=current_key)
+                        response = temp_client.models.generate_content(
+                            model=target_model,
+                            contents=paket_konten,
+                            config=ai_config
+                        )
+                        
+                        if response and hasattr(response, 'text'):
+                            ai_response = response.text
+                            sukses_merespons = True
+                            break # Keluar dari loop model karena sukses
+                except Exception as e:
+                    last_error_msg = str(e)
+                    # Jika error karena server sibuk (503) atau batas limit (429), lanjut coba model berikutnya/key berikutnya
+                    if "503" in last_error_msg or "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
+                        continue
                     else:
-                        st.error("⚠️ Seluruh 3 jalur kunci gratis Anda sedang padat. Silakan klik tombol 'Bersihkan Riwayat' di atas dan coba kirim ulang pesan Anda.")
-                        ai_response = None
+                        # Jika error tipe lain (misal sinyal putus total), langsung hentikan loop model ini
+                        break
+            
+            if sukses_merespons:
+                break # Keluar dari loop API Key karena sudah dapat jawaban
+            
+            # Jika sudah di kunci terakhir dan semua model gagal karena sibuk
+            if idx == len(api_keys) - 1 and not sukses_merespons:
+                st.error("⚠️ Seluruh jalur kunci dan model cadangan SeHe.AI sedang padat di server Google. Silakan tunggu 10 detik lalu kirim ulang pesan Anda.")
+                ai_response = None
+
                 else:
                     ai_response = f"Terjadi kesalahan sistem: {last_error_msg}. Pastikan internet Anda aktif."
                     break
