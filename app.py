@@ -6,10 +6,11 @@ from docx import Document
 import io
 import base64
 
-# 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
+# =====================================================================
+# 1. KONFIGURASI TAMPILAN TAB BROWSER & CUSTOM CSS PREMIUM (ANTI SAMAR)
+# =====================================================================
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
 
-# Custom CSS Premium, Ringan, Minimalis & Kontras Tinggi (Anti Tulisan Samar)
 st.markdown("""
 <style>
     /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI */
@@ -30,7 +31,7 @@ st.markdown("""
         padding-top: 2rem !important; padding-bottom: 2rem !important; max-width: 1000px !important; position: relative; z-index: 2;
     }
     
-    /* Import Font Premium (Perbaikan Tautan Resmi Google Fonts) */
+    /* Import Font Premium */
     @import url('https://googleapis.com');
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
@@ -57,7 +58,6 @@ st.markdown("""
     [data-testid="stChatMessageContent"] { 
         color: #ffffff !important; 
     }
-    /* Memaksa elemen teks di dalam jawaban AI agar tidak tertutup warna putih */
     [data-testid="stChatMessageContent"] div, [data-testid="stChatMessageContent"] span {
         background-color: transparent !important;
     }
@@ -74,6 +74,26 @@ st.markdown("""
         padding: 12px !important;
         border-radius: 12px !important;
         margin-bottom: 15px;
+    }
+    
+    /* STYLING TOMBOL PINTASAN CEPAT (GLASSMORPHISM MEWAH GLOWING - ANTI PUTIH POLOS) */
+    div[data-testid="stColumn"] button {
+        background: rgba(3, 169, 244, 0.05) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(3, 169, 244, 0.25) !important;
+        border-radius: 12px !important;
+        color: #03a9f4 !important;
+        font-weight: 600 !important;
+        padding: 12px 10px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    }
+    div[data-testid="stColumn"] button:hover {
+        background: rgba(3, 169, 244, 0.15) !important;
+        border: 1px solid #03a9f4 !important;
+        color: #ffffff !important;
+        box-shadow: 0 0 15px rgba(3, 169, 244, 0.5) !important;
+        transform: translateY(-2px);
     }
     
     /* STYLING KUSTOM TOMBOL CETAK & SIMPAN AGAR MEWAH & KONTRAS (TIDAK SAMAR) */
@@ -118,8 +138,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
-# JAVASCRIPT INJEKTOR VERSI TERBARU: PENGHANCUR DUA LOGO MERAH UTUH
 st.components.v1.html("""
 <script>
     function hancurkanLogoMerah() {
@@ -152,7 +170,9 @@ st.components.v1.html("""
 </script>
 """, height=0, width=0)
 
-# 2. Desain Tampilan Depan / Header Utama
+# =====================================================================
+# 2. DESAIN TAMPILAN DEPAN / HEADER UTAMA & BUTTON RESET MEMORI
+# =====================================================================
 st.html("""
 <div style="text-align: center; margin-bottom: 20px; font-family: sans-serif; position: relative;">
 <svg width="220" height="130" viewBox="0 0 220 150" fill="none" xmlns="http://w3.org" style="display: block; margin: 0 auto;">
@@ -174,7 +194,6 @@ st.html("""
 </div>
 """)
 
-# Tombol Reset diletakkan di halaman utama agar terhindar dari pemblokiran CSS Sidebar
 col_reset1, col_reset2, col_reset3 = st.columns([1, 2, 1])
 with col_reset2:
     if st.button("🗑️ Bersihkan Riwayat & Mulai Chat Baru", use_container_width=True):
@@ -182,16 +201,15 @@ with col_reset2:
         st.cache_data.clear()
         st.rerun()
 
-st.divider()
-
-# Tambahkan Tombol Reset di Sidebar untuk membersihkan memori obrolan yang tersumbat
+st.sidebar.write("---")
 with st.sidebar:
-    st.write("---")
     if st.button("🔄 Reset Obrolan Baru", use_container_width=True):
         st.session_state.messages = []
         st.rerun()
 
-# 3. Membaca Tiga Kunci API Secara Aman (Sistem Proteksi Berlapis Ganda)
+# =====================================================================
+# 3. MEMBACA TIGA KUNCI API SECARA AMAN (SISTEM CADANGAN OTOMATIS)
+# =====================================================================
 api_keys = []
 if "GEMINI_API_KEY_1" in st.secrets and st.secrets["GEMINI_API_KEY_1"]:
     api_keys.append(st.secrets["GEMINI_API_KEY_1"])
@@ -200,6 +218,7 @@ if "GEMINI_API_KEY_2" in st.secrets and st.secrets["GEMINI_API_KEY_2"]:
 if "GEMINI_API_KEY_3" in st.secrets and st.secrets["GEMINI_API_KEY_3"]:
     api_keys.append(st.secrets["GEMINI_API_KEY_3"])
 
+
 if not api_keys and "GEMINI_API_KEY" in st.secrets:
     api_keys.append(st.secrets["GEMINI_API_KEY"])
 
@@ -207,20 +226,20 @@ if not api_keys:
     st.error("API Key Gemini belum diatur di menu Secrets!")
     st.stop()
 
-# ==============================================================================
-# 4. KONFIGURASI SISTEM INSTRUKSI (DOKUMEN MEWAH, WARNA OTOMATIS, TANPA ZEBRA)
-# ==============================================================================
+# =====================================================================
+# 4. KONFIGURASI SISTEM INSTRUKSI (DOKUMEN MEWAH, ELEGAN, WARNA OTOMATIS)
+# =====================================================================
 ai_config = types.GenerateContentConfig(
     system_instruction=(
         "Anda adalah SeHe.AI, asisten super cerdas berkemampuan tinggi di bidang perikanan pesisir "
         "dan administrasi pendidikan/sekolah. "
         "TUGAS UTAMA: Anda wajib mematuhi dan memasukkan SETIAP poin data yang diminta pengguna atau yang termuat dalam file rujukan secara utuh tanpa ada yang dikurangi/disingkat. "
-        "PENTING 1: Jika pengguna menanyakan cuaca, tinggi gelombang, atau data terkini, WAJIB gunakan alat Google Search. "
+        "PENTING 1: Jika pengguna menanyakan cuaca, tinggi gelombang, data pasang surut, fase bulan, atau data terkini, WAJIB gunakan alat Google Search. "
         "PENTING 2: Jika pengguna meminta tabel, laporan, kurikulum, proposal, RPP, atau draf administrasi, "
         "Anda WAJIB menampilkannya secara UTUH, PANJANG, DAN DETAIL dalam bentuk dokumen HTML murni dengan inline CSS yang elegan (TANPA tag markdown ```html). "
         "IKUTI ATURAN WAJIB DESAIN DOKUMEN MEWAH & PROFESIONAL BERIKUT: "
         "- TAMPILAN MONOKROMATIK PREMIUM & MINIMALIS KONTEMPORER. DILARANG KERAS MENGGUNAKAN GAYA ZEBRA STRIPING ATAU BARIS SELANG-SELING. Latar belakang baris data harus bersih polos transparan. "
-        "- WARNA TEMA OTOMATIS: Pilih satu warna tema solid yang mewah berdasarkan topik dokumen (Contoh: Deep Oceanic Blue #014d7c untuk kelautan/perikanan, Emerald Green #0d5c3a untuk pendidikan/sekolah, Charcoal Gray #2d3748 untuk keuangan/anggaran biaya). "
+        "- WARNA TEMA OTOMATIS: Pilih satu warna tema solid yang mewah berdasarkan topik dokumen (Contoh: Deep Oceanic Blue #014d7c untuk kelautan/perikanan/cuaca, Emerald Green #0d5c3a untuk pendidikan/sekolah, Charcoal Gray #2d3748 untuk keuangan/anggaran biaya). "
         "- Gunakan warna tema otomatis pilihan Anda tersebut untuk latar belakang Kepala Tabel (th) dengan teks putih tebal (color: #ffffff !important; font-weight: 600; padding: 12px 14px; text-align: left; letter-spacing: 0.5px;). "
         "- Desain Garis Pembatas Sleek: Hilangkan seluruh garis vertikal kaku. Hanya gunakan garis horizontal bawah yang tipis transparan di setiap baris data (border-bottom: 1px solid rgba(255,255,255,0.15);). "
         "- Padding Sel Harus Lega (padding: 12px 14px;) agar teks seimbang, mewah, memiliki ruang napas tinggi, dan mudah dianalisis. "
@@ -230,9 +249,9 @@ ai_config = types.GenerateContentConfig(
     tools=[{"google_search": {}}]
 )
 
-# ==============================================================================
+# =====================================================================
 # 5. SINKRONISASI OTOMATIS FOLDER GOOGLE DRIVE KHUSUS SEHE.AI
-# ==============================================================================
+# =====================================================================
 def baca_data_bantuan_drive(prompt_user):
     referensi_drive = ""
     try:
@@ -258,11 +277,12 @@ def baca_data_bantuan_drive(prompt_user):
         pass
     return referensi_drive
 
-# ==============================================================================
-# 6. WADAH RIWAYAT PERCAKAPAN KHUSUS TAMPILAN LAYAR
-# ==============================================================================
+# =====================================================================
+# 6. WADAH UNTUK MENYIMPAN RIWAYAT PERCAKAPAN KHUSUS TAMPILAN LAYAR
+# =====================================================================
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
 
 # =====================================================================
 # 7. MENAMPILKAN RIWAYAT CHAT DI LAYAR WEB
@@ -380,6 +400,121 @@ if final_prompt:
                 
                 # Proses pembungkusan dokumen HTML formal MSO Word murni
                 html_wrapped = f"""
+     # =====================================================================
+# 7. MENAMPILKAN RIWAYAT CHAT DI LAYAR WEB
+# =====================================================================
+for i, message in enumerate(st.session_state.messages):
+    avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
+    with st.chat_message(message["role"], avatar=avatar_icon):
+        st.markdown(message["content"], unsafe_allow_html=True)
+
+# =====================================================================
+# 8. AREA FITUR BARU: PERINTAH CEPAT (3 NAVIGASI MARITIM MEWAH BENING)
+# =====================================================================
+st.write("### 🎯 Rekomendasi Pintasan Cepat")
+cp1, cp2, cp3 = st.columns(3)
+prompt_pilihan = None
+
+with cp1:
+    if st.button("⛅ Cek Cuaca & Gelombang", use_container_width=True):
+        prompt_pilihan = "Bagaimana kondisi cuaca, suhu, arah angin, dan tinggi gelombang laut di wilayah pesisir hari ini? Berikan analisis kelayakan aman atau tidaknya untuk melaut."
+with cp2:
+    if st.button("🌊 Cek Pasang Surut Laut", use_container_width=True):
+        prompt_pilihan = "Bagaimana data grafik perkiraan waktu pasang surut air laut di wilayah pesisir hari ini? Berikan analisis waktu aman untuk nelayan menyandarkan kapal."
+with cp3:
+    if st.button("🌙 Cek Fase Bulan Terkini", use_container_width=True):
+        prompt_pilihan = "Bagaimana kondisi fase bulan hari ini secara real-time? Berikan analisis dampaknya terhadap pergerakan kuat-lemah arus air laut dan kelimpahan tangkapan ikan nelayan malam ini."
+
+# AREA HUBUNGAN FILE DATA PENDUKUNG (WORD & PDF SEPAKAT MAKS 10MB)
+st.write("### 📄 Lampirkan Dokumen Rujukan (.PDF / .DOCX)")
+file_pendukung = st.file_uploader("Unggah file kurikulum, RPP asli, atau proposal dari HP/Drive Anda sebagai basis data rujukan SeHe.AI:", type=["pdf", "docx"])
+
+# Logika penentuan prompt akhir dari chat input atau tombol pintasan cepat
+prompt_input = st.chat_input("Tanya sesuatu ke SeHe.AI...")
+final_prompt = prompt_input if prompt_input else prompt_pilihan
+
+if final_prompt:
+    # Proteksi Ukuran File Terlebih Dahulu Sebelum Memulai Pengiriman (Batas 10MB)
+    file_valid = True
+    if file_pendukung is not None:
+        ukuran_file_mb = file_pendukung.size / (1024 * 1024)
+        if ukuran_file_mb > 10.0:
+            file_valid = False
+
+    if not file_valid:
+        st.error("⚠️ File terlalu besar (Maksimal 10 MB) agar proses membaca cepat dan instan. Silakan kompres dokumen Anda sebelum diunggah.")
+    else:
+        st.chat_message("user", avatar="👤").markdown(final_prompt)
+        st.session_state.messages.append({"role": "user", "content": final_prompt})
+
+        ai_response = None
+        last_error_msg = ""
+        paket_konten = []
+        
+        # Proses pembacaan dokumen rujukan lokal (Upload HP/Drive)
+        if file_pendukung is not None:
+            nama_file = file_pendukung.name.lower()
+            if nama_file.endswith('.docx'):
+                try:
+                    doc = Document(io.BytesIO(file_pendukung.read()))
+                    teks_word = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+                    paket_konten.append(f"[DOKUMEN RUJUKAN UTAMA WORD]:\n{teks_word}\n\n")
+                except Exception as e:
+                    st.warning(f"Gagal membaca file Word: {e}")
+            elif nama_file.endswith('.pdf'):
+                try:
+                    pdf_data = file_pendukung.read()
+                    paket_konten.append(
+                        types.Part.from_bytes(
+                            data=pdf_data,
+                            mime_type="application/pdf"
+                        )
+                    )
+                except Exception as e:
+                    st.warning(f"Gagal memproses file PDF: {e}")
+
+        # Jalankan pemindaian otomatis ke Drive latar belakang via kata kunci pipa (|)
+        teks_tanya = str(final_prompt)
+        referensi_lokal = baca_data_bantuan_drive(teks_tanya)
+        if referensi_lokal:
+            paket_konten.append(f"{referensi_lokal}\n\n")
+            
+        # Gabungkan teks pertanyaan utama pengguna ke paket pengiriman
+        paket_konten.append(teks_tanya)
+
+        # Perulangan otomatis mencoba ketiga API Key secara bergantian jika terjadi Error 429
+        for idx, current_key in enumerate(api_keys):
+            try:
+                with st.spinner(f"SeHe.AI sedang membedah data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
+                    temp_client = genai.Client(api_key=current_key)
+                    response = temp_client.models.generate_content(
+                        model='gemini-2.5-flash',
+                        contents=paket_konten,
+                        config=ai_config
+                    )
+                    
+                    if response and hasattr(response, 'text'):
+                        ai_response = response.text
+                        break 
+            except Exception as e:
+                last_error_msg = str(e)
+                if "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
+                    if idx < len(api_keys) - 1:
+                        continue 
+                    else:
+                        st.error("⚠️ Seluruh 3 jalur kunci gratis Anda sedang padat. Silakan klik tombol 'Bersihkan Riwayat' di atas dan coba kirim ulang pesan Anda.")
+                        ai_response = None
+                else:
+                    ai_response = f"Terjadi kesalahan sistem: {last_error_msg}. Pastikan internet Anda aktif."
+                    break
+
+        # Tampilkan jawaban akhir di layar web dengan avatar ikan
+        if ai_response is not None:
+            with st.chat_message("assistant", avatar="🐟"):
+                st.markdown(ai_response, unsafe_allow_html=True)
+                
+                # Proses pembungkusan dokumen HTML formal MSO Word murni
+                html_wrapped = f"""
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' 
                       xmlns:w='urn:schemas-microsoft-com:office:word' 
                       xmlns='http://w3.org'>
@@ -440,7 +575,6 @@ if final_prompt:
                 """, unsafe_allow_html=True)
                 
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
-            # st.rerun()
         else:
             if "429" not in last_error_msg and "RESOURCE_EXHAUSTED" not in last_error_msg:
                 st.error(f"Gagal mendapatkan respons dari server Google AI Studio. Detail: {last_error_msg}")
