@@ -470,22 +470,23 @@ if final_prompt:
                 new_idx = len(st.session_state.messages)
                 # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
                 # =============================================================
-                # PERBAIKAN FINISH: HAPUS HURUF 'f' UTK MENGHINDARI ERROR DESIMAL
+                # SOLUSI AMAN: MENGHAPUS EMOJI DARI STRIP PROGRAM PYTHON
                 # =============================================================
                 html_tombol = """
                 <div class="action-buttons-container">
                     <button class="btn-action btn-blue" onclick="window.print()">
-                        🖨️ Cetak / PDF
+                        Cetak / PDF
                     </button>
                     <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.html">
-                        💾 Simpan .HTML
+                        Simpan .HTML
                     </a>
                 </div>
-                """.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
+                """
+                html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
                 
-                # Kirim ke layar tanpa menggunakan f-string
+                # Kirim langsung ke layar Streamlit
                 st.markdown(html_tombol, unsafe_allow_html=True)
-
+                
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
         else:
             if "429" not in last_error_msg and "RESOURCE_EXHAUSTED" not in last_error_msg:
