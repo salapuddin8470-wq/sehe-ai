@@ -440,7 +440,7 @@ if final_prompt:
                 """, unsafe_allow_html=True)
                 
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
-            st.rerun()
+            # st.rerun()
         else:
             if "429" not in last_error_msg and "RESOURCE_EXHAUSTED" not in last_error_msg:
                 st.error(f"Gagal mendapatkan respons dari server Google AI Studio. Detail: {last_error_msg}")
