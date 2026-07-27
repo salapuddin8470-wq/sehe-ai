@@ -336,12 +336,13 @@ if final_prompt:
         for idx, current_key in enumerate(api_keys):
             try:
                 with st.spinner(f"SeHe.AI sedang membedah data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
-                    temp_client = genai.Client(api_key=current_key)
-                    response = temp_client.models.generate_content(
-                        model='gemini-3.1-flash.lite',
-                        contents=paket_konten,
-                        config=ai_config
-                    )
+                temp_client = genai.Client(api_key=current_key)
+                response = temp_client.models.generate_content(
+                    model='gemini-2.5-flash',  # <-- KEMBALI KE VERSI STABIL INI
+                    contents=paket_konten,
+                    config=ai_config
+                )
+
                     
                     if response and hasattr(response, 'text'):
                         ai_response = response.text
