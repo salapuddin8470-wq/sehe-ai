@@ -293,18 +293,21 @@ for i, message in enumerate(st.session_state.messages):
         st.markdown(message["content"], unsafe_allow_html=True)
         
         if message["role"] == "assistant":
-            # Menyusun kode HTML Word murni tanpa tanda kurung kurawal CSS agar Python tidak mogok
+            # Proteksi desimal menggunakan titik (.), bukan koma (,)
+            css_word_hist = (
+                "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
+                "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; } "
+                "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; } "
+                "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; } "
+                "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; } "
+                "th, td { border-left: none !important; border-right: none !important; }"
+            )
+            
             html_wrapped_hist = (
                 "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'>"
                 "<head><meta charset='utf-8'><title>Dokumen SeHe AI</title>"
                 "<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->"
-                "<style>"
-                "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; }"
-                "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }"
-                "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; }"
-                "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; }"
-                "th, td { border-left: none !important; border-right: none !important; }"
-                "</style>"
+                "<style>" + css_word_hist + "</style>"
                 "</head>"
                 "<body>DOKUMEN_SEHE_AI_CONTENT</body>"
                 "</html>"
@@ -314,33 +317,38 @@ for i, message in enumerate(st.session_state.messages):
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
             
             # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi Khusus Riwayat Chat
-            st.markdown(f"""
-                <div class="action-buttons-container">
-                    <button class="btn-action btn-blue" onclick="window.print()">
-                        🖨️ Cetak / PDF
-                    </button>
-                    <a class="btn-action btn-green" href="data:text/html;base64,{b64_html_hist}" download="Dokumen_SeHe_AI_{i}.html">
-                        💾 Simpan .HTML
-                    </a>
-                </div>
-            """, unsafe_allow_html=True)
+            html_tombol_hist = """
+            <div class="action-buttons-container">
+                <button class="btn-action btn-blue" onclick="window.print()">
+                    🖨️ Cetak / PDF
+                </button>
+                <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX.html">
+                    💾 Simpan .HTML
+                </a>
+            </div>
+            """
+            html_tombol_hist = html_tombol_hist.replace("B64_DATA_DOKUMEN", b64_html_hist).replace("INDEX", str(i))
+            st.markdown(html_tombol_hist, unsafe_allow_html=True)
 
 # =====================================================================
 # 8. AREA FITUR BARU: PERINTAH CEPAT (3 NAVIGASI MARITIM MEWAH BENING)
 # =====================================================================
 st.write("### 🎯 Rekomendasi Pintasan Cepat")
 cp1, cp2, cp3 = st.columns(3)
-prompt_pilihan = None
+
+# Menggunakan session_state agar nilai tidak hilang saat halaman rerun otomatis
+if "prompt_pilihan" not in st.session_state:
+    st.session_state.prompt_pilihan = None
 
 with cp1:
     if st.button("⛅ Cek Cuaca & Gelombang", use_container_width=True):
-        prompt_pilihan = "Bagaimana kondisi cuaca, suhu, arah angin, dan tinggi gelombang laut di wilayah pesisir hari ini? Berikan analisis kelayakan aman atau tidaknya untuk melaut."
+        st.session_state.prompt_pilihan = "Bagaimana kondisi cuaca, suhu, arah angin, dan tinggi gelombang laut di wilayah pesisir hari ini? Berikan analisis kelayakan aman atau tidaknya untuk melaut."
 with cp2:
     if st.button("🌊 Cek Pasang Surut Laut", use_container_width=True):
-        prompt_pilihan = "Bagaimana data grafik perkiraan waktu pasang surut air laut di wilayah pesisir hari ini? Berikan analisis waktu aman untuk nelayan menyandarkan kapal."
+        st.session_state.prompt_pilihan = "Bagaimana data grafik perkiraan waktu pasang surut air laut di wilayah pesisir hari ini? Berikan analisis waktu aman untuk nelayan menyandarkan kapal."
 with cp3:
     if st.button("🌙 Cek Fase Bulan Terkini", use_container_width=True):
-        prompt_pilihan = "Bagaimana kondisi fase bulan hari ini secara real-time? Berikan analisis dampaknya terhadap pergerakan kuat-lemah arus air laut dan kelimpahan tangkapan ikan nelayan malam ini."
+        st.session_state.prompt_pilihan = "Bagaimana kondisi fase bulan hari ini secara real-time? Berikan analisis dampaknya terhadap pergerakan kuat-lemah arus air laut dan kelimpahan tangkapan ikan nelayan malam ini."
 
 # AREA HUBUNGAN FILE DATA PENDUKUNG (WORD & PDF SEPAKAT MAKS 10MB)
 st.write("### 📄 Lampirkan Dokumen Rujukan (.PDF / .DOCX)")
@@ -348,9 +356,14 @@ file_pendukung = st.file_uploader("Unggah file kurikulum, RPP asli, atau proposa
 
 # Logika penentuan prompt akhir dari chat input atau tombol pintasan cepat
 prompt_input = st.chat_input("Tanya sesuatu ke SeHe.AI...")
-final_prompt = prompt_input if prompt_input else prompt_pilihan
+
+# Ambil input, utamakan chat_input, jika kosong ambil dari tombol pintasan
+final_prompt = prompt_input if prompt_input else st.session_state.prompt_pilihan
 
 if final_prompt:
+    # Reset prompt_pilihan setelah digunakan agar tidak memicu perulangan
+    st.session_state.prompt_pilihan = None
+    
     # Proteksi Ukuran File Terlebih Dahulu Sebelum Memulai Pengiriman (Batas 10MB)
     file_valid = True
     if file_pendukung is not None:
@@ -393,7 +406,7 @@ if final_prompt:
         # Jalankan pemindaian otomatis ke Drive latar belakang via kata kunci pipa (|)
         teks_tanya = str(final_prompt)
         referensi_lokal = baca_data_bantuan_drive(teks_tanya)
-        if referensi_lokal:
+        if referensi_local:
             paket_konten.append(f"{referensi_lokal}\n\n")
             
         # Gabungkan teks pertanyaan utama pengguna ke paket pengiriman
@@ -430,26 +443,6 @@ if final_prompt:
             with st.chat_message("assistant", avatar="🐟"):
                 st.markdown(ai_response, unsafe_allow_html=True)
                 
-                # Proses pembungkusan dokumen HTML formal MSO Word murni
-                # =============================================================
-                # PERBAIKAN FINAL: TANPA F-STRING & MENGGUNAKAN AMAN .replace()
-                # =============================================================
-                html_wrapped = """
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-                      xmlns:w='urn:schemas-microsoft-com:office:word' 
-                      xmlns='http://w3.org'>
-                <head>
-                    <meta charset="utf-8">
-                    <title>Dokumen SeHe AI</title>
-                    <!--[if gte mso 9]>
-                    <xml>
-                        <w:WordDocument>
-                            <w:View>Print</w:View>
-                            <w:Zoom>100</w:Zoom>
-                            <w:DoNotOptimizeForBrowser/>
-                        </w:WordDocument>
-                    </xml>
-                    <![endif]-->
                 # =============================================================
                 # SOLUSI TOTAL KEBAL SYNTAXERROR: ENKAPSULASI TEKS HORIZONTAL
                 # =============================================================
@@ -462,16 +455,14 @@ if final_prompt:
                 
                 css_word_style = css_bag_1 + css_bag_2 + css_bag_3 + css_bag_4 + css_bag_5 + css_bag_6
                 
+                # Gabungkan struktur HTML Word secara bersih tanpa merusak pembaca Python
                 html_wrapped = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_style + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
                 
                 html_wrapped = html_wrapped.replace("DOKUMEN_SEHE_AI_CONTENT", ai_response)
-                
                 b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
                 new_idx = len(st.session_state.messages)
+                
                 # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
-                # =============================================================
-                # SOLUSI AMAN: MENGHAPUS EMOJI DARI STRIP PROGRAM PYTHON
-                # =============================================================
                 html_tombol = """
                 <div class="action-buttons-container">
                     <button class="btn-action btn-blue" onclick="window.print()">
@@ -483,8 +474,6 @@ if final_prompt:
                 </div>
                 """
                 html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
-                
-                # Kirim langsung ke layar Streamlit
                 st.markdown(html_tombol, unsafe_allow_html=True)
                 
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
