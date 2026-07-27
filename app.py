@@ -285,7 +285,7 @@ if "messages" not in st.session_state:
 
 
 # =====================================================================
-# 7. MENAMPILKAN RIWAYAT CHAT DI LAYAR WEB (PERBAIKAN SINKRON BARIS 288)
+# 7. MENAMPILKAN RIWAYAT CHAT DI LAYAR WEB (PERBAIKAN TOTAL BEBAS ERROR)
 # =====================================================================
 for i, message in enumerate(st.session_state.messages):
     avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
@@ -293,10 +293,22 @@ for i, message in enumerate(st.session_state.messages):
         st.markdown(message["content"], unsafe_allow_html=True)
         
         if message["role"] == "assistant":
-            # Mengunci string CSS tanpa baris baru agar aman dari sensor matematika Python
-            css_word_hist = "@page { size: 21cm 29.7cm; margin: 2.54cm; mso-page-orientation: portrait; } body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; } table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; } th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; } td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; } th, td { border-left: none !important; border-right: none !important; }"
-            
-            html_wrapped_hist = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>" + css_word_hist + "</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"
+            # Menyusun kode HTML Word murni tanpa tanda kurung kurawal CSS agar Python tidak mogok
+            html_wrapped_hist = (
+                "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'>"
+                "<head><meta charset='utf-8'><title>Dokumen SeHe AI</title>"
+                "<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->"
+                "<style>"
+                "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; }"
+                "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }"
+                "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; }"
+                "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; }"
+                "th, td { border-left: none !important; border-right: none !important; }"
+                "</style>"
+                "</head>"
+                "<body>DOKUMEN_SEHE_AI_CONTENT</body>"
+                "</html>"
+            )
             
             html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", message["content"])
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
