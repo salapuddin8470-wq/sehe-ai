@@ -406,7 +406,7 @@ if final_prompt:
         # Jalankan pemindaian otomatis ke Drive latar belakang via kata kunci pipa (|)
         teks_tanya = str(final_prompt)
         referensi_lokal = baca_data_bantuan_drive(teks_tanya)
-        if referensi_local:
+        if referensi_lokal:
             paket_konten.append(f"{referensi_lokal}\n\n")
             
         # Gabungkan teks pertanyaan utama pengguna ke paket pengiriman
