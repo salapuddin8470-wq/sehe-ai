@@ -449,9 +449,9 @@ if final_prompt:
                 st.error("⚠️ Seluruh jalur kunci dan model cadangan SeHe.AI sedang padat di server Google. Silakan tunggu 10 detik lalu kirim ulang pesan Anda.")
                 ai_response = None
 
-                else:
-                    ai_response = f"Terjadi kesalahan sistem: {last_error_msg}. Pastikan internet Anda aktif."
-                    break
+            else:
+                ai_response = f"Terjadi kesalahan sistem: {last_error_msg}. Pastikan internet Anda aktif."
+                break
 
         # Tampilkan jawaban akhir di layar web dengan avatar ikan
         if ai_response is not None:
