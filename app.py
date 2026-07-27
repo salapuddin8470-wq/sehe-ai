@@ -30,12 +30,12 @@ st.markdown("""
         padding-top: 2rem !important; padding-bottom: 2rem !important; max-width: 1000px !important; position: relative; z-index: 2;
     }
     
-    /* Import Font Premium */
+    /* Import Font Premium (Perbaikan Tautan Resmi Google Fonts) */
     @import url('https://googleapis.com');
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    /* Memaksa Semua Teks Berwarna Putih Terang Kecuali Input & Tombol HTML Kustom */
-    .stApp p, .stApp li, .stApp span:not(.btn-action), .stApp div:not([data-testid="stChatInput"]):not(.action-buttons-container), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+    /* Memaksa Semua Teks Berwarna Putih Terang (Kecuali Input & Area Dokumen HTML) */
+    .stApp p, .stApp li, .stApp span:not(.btn-action), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
         color: #ffffff !important;
     }
     .stApp {
@@ -44,10 +44,23 @@ st.markdown("""
     [data-testid="stSidebar"] {
         background: rgba(4, 8, 15, 0.85) !important; backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.05); z-index: 3;
     }
-    .stChatMessage {
-        background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 12px !important; margin-bottom: 12px !important;
+    
+    /* PENGATURAN GELEMBUNG CHAT: CEGAH LATAR PUTIH DAN KUNCI WARNA TEKS */
+    .stChatMessage, [data-testid="stChatMessage"] {
+        background-color: rgba(255, 255, 255, 0.05) !important; 
+        backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        margin-bottom: 12px !important;
+        padding: 15px !important;
     }
-    [data-testid="stChatMessageContent"] { color: #ffffff !important; }
+    [data-testid="stChatMessageContent"] { 
+        color: #ffffff !important; 
+    }
+    /* Memaksa elemen teks di dalam jawaban AI agar tidak tertutup warna putih */
+    [data-testid="stChatMessageContent"] div, [data-testid="stChatMessageContent"] span {
+        background-color: transparent !important;
+    }
     
     [data-testid="stChatInput"] {
         border-radius: 12px !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; background-color: #ffffff !important; backdrop-filter: blur(10px);
@@ -104,6 +117,7 @@ st.markdown("""
     ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.2); border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
+
 
 # JAVASCRIPT INJEKTOR VERSI TERBARU: PENGHANCUR DUA LOGO MERAH UTUH
 st.components.v1.html("""
