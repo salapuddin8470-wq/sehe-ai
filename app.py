@@ -514,8 +514,8 @@ if final_prompt:
                 st.markdown(ai_response, unsafe_allow_html=True)
                 
                 # Proses pembungkusan dokumen HTML formal MSO Word murni
-                # =============================================================
-                # CARA PERBAIKAN: HAPUS HURUF 'f' DAN GUNAKAN .replace() AMAN
+                                # =============================================================
+                # PERBAIKAN FINAL: TANPA F-STRING & MENGGUNAKAN AMAN .replace()
                 # =============================================================
                 html_wrapped = """
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' 
@@ -553,18 +553,18 @@ if final_prompt:
                         th, td { 
                             border: 1px solid #cbd5e1; 
                             padding: 8px 12px; 
-                        }}
+                        }
                     </style>
                 </head>
                 <body>
-                    {KONTEN_AI_DISINI}
+                    DOKUMEN_SEHE_AI_CONTENT
                 </body>
                 </html>
-                """.replace("{KONTEN_AI_DISINI}", ai_response) # Menyuntikkan teks aman tanpa merusak CSS
+                """.replace("DOKUMEN_SEHE_AI_CONTENT", ai_response)
                 
                 b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
                 new_idx = len(st.session_state.messages)
-
+                
                 # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
                 st.markdown(f"""
                     <div class="action-buttons-container">
