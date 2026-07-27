@@ -2,6 +2,9 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import os
+from docx import Document
+import io
+import base64
 
 # 1. Konfigurasi Tampilan Tab Browser dengan nama SeHe.AI
 st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
@@ -15,7 +18,7 @@ st.markdown("""
     .viewerBadge_link__1S137 {display: none !important;}
     [data-testid="stDecoration"] {display: none !important;}
     
-    /* MENYEMBUNYIKAN KEDUA IKON MERAH DI HP ORANG LAIN */
+    /* MENYEMBUNYIKAN KEDUA IKON MERAH DI HP ORANG LAIN (BACKUP CSS) */
     [data-testid="stViewerBadge"], .viewerBadge_container__1S137, a[href*="streamlit.io"] {
         display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important; width: 0px !important;
     }
@@ -31,7 +34,8 @@ st.markdown("""
     @import url('https://googleapis.com');
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
     
-    .stApp p, .stApp li, .stApp span, .stApp div:not([data-testid="stChatInput"]), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+    /* Memaksa Semua Teks Berwarna Putih Terang Kecuali Input & Tombol HTML Kustom */
+    .stApp p, .stApp li, .stApp span:not(.btn-action), .stApp div:not([data-testid="stChatInput"]):not(.action-buttons-container), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
         color: #ffffff !important;
     }
     .stApp {
@@ -49,25 +53,88 @@ st.markdown("""
         border-radius: 12px !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; background-color: #ffffff !important; backdrop-filter: blur(10px);
     }
     [data-testid="stChatInput"] textarea { color: #0f172a !important; font-weight: 500 !important; }
+    
+    /* Styling Elemen Kotak Unggah File */
+    [data-testid="stFileUploader"] {
+        background-color: rgba(255, 255, 255, 0.02) !important;
+        border: 1px dashed rgba(255, 255, 255, 0.15) !important;
+        padding: 12px !important;
+        border-radius: 12px !important;
+        margin-bottom: 15px;
+    }
+    
+    /* STYLING KUSTOM TOMBOL CETAK & SIMPAN AGAR MEWAH & KONTRAS (TIDAK SAMAR) */
+    .action-buttons-container {
+        display: flex;
+        gap: 12px;
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+    .btn-action {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    }
+    .btn-action:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+    }
+    .btn-blue {
+        background-color: #0288d1 !important;
+        color: #ffffff !important;
+    }
+    .btn-blue:hover { background-color: #039be5 !important; }
+    .btn-green {
+        background-color: #2e7d32 !important;
+        color: #ffffff !important;
+    }
+    .btn-green:hover { background-color: #388e3c !important; }
+    
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.2); border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
-# JAVASCRIPT INJEKTOR: PEMUSNAH LOGO MERAH UNTUK USER UMUM
+# JAVASCRIPT INJEKTOR VERSI TERBARU: PENGHANCUR DUA LOGO MERAH UTUH
 st.components.v1.html("""
 <script>
-    function hapusElemenMerah() {
-        const appToolbar = window.parent.document.querySelector('div[data-testid="stStatusWidget"]');
-        if (appToolbar) {
-            const statusKoneksi = appToolbar.querySelector('div[data-testid="stConnectionStatus"]');
-            if (statusKoneksi) statusKoneksi.style.setProperty('display', 'none', 'important');
-            const mahkotaMerah = appToolbar.querySelector('div[data-testid="stViewerBadge"]');
-            if (mahkotaMerah) mahkotaMerah.style.setProperty('display', 'none', 'important');
+    function hancurkanLogoMerah() {
+        const rootDOM = window.parent.document;
+        if (rootDOM) {
+            const badges = rootDOM.querySelectorAll('a[href*="streamlit.io"], [data-testid="stViewerBadge"], [class*="viewerBadge"]');
+            badges.forEach(el => {
+                el.style.setProperty('display', 'none', 'important');
+                el.style.setProperty('visibility', 'hidden', 'important');
+            });
+            const statusKoneksi = rootDOM.querySelectorAll('[data-testid="stConnectionStatus"], [class*="stConnectionStatus"]');
+            statusKoneksi.forEach(el => {
+                el.style.setProperty('display', 'none', 'important');
+                el.style.setProperty('visibility', 'hidden', 'important');
+            });
+            const statusWidget = rootDOM.querySelector('div[data-testid="stStatusWidget"]');
+            if (statusWidget) {
+                const childElements = statusWidget.children;
+                for (let child of childElements) {
+                    if (!child.innerText || !child.innerText.includes("Manage app")) {
+                        if (child.querySelector('a') || child.querySelector('svg')) {
+                            child.style.setProperty('display', 'none', 'important');
+                        }
+                    }
+                }
+            }
         }
     }
-    setInterval(hapusElemenMerah, 500);
+    setInterval(hancurkanLogoMerah, 300);
 </script>
 """, height=0, width=0)
 
@@ -88,79 +155,21 @@ st.html("""
 </svg>
 <div style="display: inline-block; text-align: left; position: relative;">
     <h1 style="color: #03a9f4 !important; margin: 0; font-size: 36px; font-weight: bold; letter-spacing: 0.5px; display: inline-block;">SeHe.AI</h1>
-    <span style="font-size: 11px; color: rgba(255, 255, 255, 0.5) !important; font-style: italic; position: absolute; bottom: -8px; right: 2px; white-space: nowrap;">by rikoba</span>
+    <span style="font-size: 11px; color: rgba(255, 255, 255, 0.4) !important; font-style: italic; position: absolute; bottom: -8px; right: 2px; white-space: nowrap;">by rikoba</span>
 </div>
 </div>
 """)
+
 # Tombol Reset diletakkan di halaman utama agar terhindar dari pemblokiran CSS Sidebar
-col_reset1, col_reset2, col_reset3 = st.columns([1, 2, 1]) # Diatur proporsinya agar rapi di tengah
+col_reset1, col_reset2, col_reset3 = st.columns([1, 2, 1])
 with col_reset2:
     if st.button("🗑️ Bersihkan Riwayat & Mulai Chat Baru", use_container_width=True):
-        st.session_state.messages = [] # Mengosongkan memori chat
-        st.cache_data.clear()          # MENGGUNAKAN FUNGSI CACHE YANG BENAR
+        st.session_state.messages = []
+        st.cache_data.clear()
         st.rerun()
+
 st.divider()
 
-# 3. Membaca Beberapa Kunci API Secara Aman (Sistem Cadangan)
-api_keys = []
-if "GEMINI_API_KEY_1" in st.secrets and st.secrets["GEMINI_API_KEY_1"]:
-    api_keys.append(st.secrets["GEMINI_API_KEY_1"])
-if "GEMINI_API_KEY_2" in st.secrets and st.secrets["GEMINI_API_KEY_2"]:
-    api_keys.append(st.secrets["GEMINI_API_KEY_2"])
-if "GEMINI_API_KEY_3" in st.secrets and st.secrets["GEMINI_API_KEY_3"]:
-    api_keys.append(st.secrets["GEMINI_API_KEY_3"]) # Jalur cadangan ketiga aktif!
-
-# Jika memakai format lama (antisipasi fallback)
-if not api_keys and "GEMINI_API_KEY" in st.secrets:
-    api_keys.append(st.secrets["GEMINI_API_KEY"])
-
-if not api_keys:
-    st.error("API Key Gemini belum diatur di menu Secrets!")
-    st.stop()
-
-# 4. Konfigurasi Sistem Instruksi Tabel Formal (VERSI WARNA OTOMATIS PREMIUM)
-ai_config = types.GenerateContentConfig(
-    system_instruction=(
-        "Anda adalah SeHe.AI, asisten super cerdas dengan kemampuan ganda di bidang perikanan pesisir "
-        "dan administrasi pendidikan/sekolah. "
-        "TUGAS UTAMA: Jika pengguna meminta tabel, laporan, kurikulum, surat, atau draf administrasi, "
-        "Anda WAJIB menampilkannya dalam format tabel/elemen HTML murni dengan inline CSS yang sangat rapi (TANPA menggunakan tag markdown ```html). "
-        "ATURAN WARNA OTOMATIS (PSYCHOLOGY COLOR MATCHING): "
-        "- Untuk topik sekolah/pendidikan, gunakan tema hijau emerald (#0f5132) atau teal (#0f766e) pada kepala tabel (th). "
-        "- Untuk topik perikanan/laut/nelayan, gunakan tema biru samudra dalam (#032b4d) atau deep navy (#1e3a8a) pada kepala tabel (th). "
-        "- Untuk topik keuangan/bisnis/laporan umum, gunakan tema charcoal/hitam formal (#212529) atau slate (#334155). "
-        "STANDAR DESAIN DOKUMEN FORMAL WORD & WEB: "
-        "- Seluruh teks di dalam kepala tabel (th) WAJIB berwarna putih bersih (color: #ffffff !important;) dan tebal (font-weight: bold;). "
-        "- Gunakan border tipis elegan berwarna abu-abu transparan (border: 1px solid #cbd5e1;) di setiap sel (th dan td). "
-        "- Berikan padding yang lega agar teks nyaman dibaca (padding: 10px 14px;). "
-        "- Seluruh teks di dalam isi tabel (td) WAJIB berwarna gelap kontras seperti hitam (#000000) atau abu-abu gelap (#1e293b) "
-        "agar ketika file diunduh ke Microsoft Word, tulisannya langsung terbaca jelas di atas kertas putih. "
-        "- Sediakan efek baris selang-seling (zebra striping) dengan warna latar belakang abu-abu sangat tipis (background-color: #f8fafc;) pada baris genap."
-    ),
-    temperature=0.6, # Diturunkan sedikit ke 0.6 agar AI lebih disiplin mengikuti format warna
-    tools=[]
-)
-
-
-
-# 6. Wadah untuk menyimpan riwayat percakapan khusus untuk tampilan layar
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# 7. Menampilkan riwayat chat di layar web
-for i, message in enumerate(st.session_state.messages):
-    avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
-    with st.chat_message(message["role"], avatar=avatar_icon):
-        st.markdown(message["content"], unsafe_allow_html=True)
-        
-        if message["role"] == "assistant":
-            st.download_button(
-                label="⬇️ Download sebagai HTML",
-                data=message["content"],
-                file_name=f"Dokumen_SeHe_AI_{i}.html",
-                mime="text/html",
-                key=f"dl_btn_{i}"
-            )
 # Tambahkan Tombol Reset di Sidebar untuk membersihkan memori obrolan yang tersumbat
 with st.sidebar:
     st.write("---")
@@ -168,172 +177,255 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-# =====================================================================
-# SINKRONISASI OTOMATIS FOLDER GOOGLE DRIVE KHUSUS SEHE.AI
-# =====================================================================
+# 3. Membaca Tiga Kunci API Secara Aman (Sistem Proteksi Berlapis Ganda)
+api_keys = []
+if "GEMINI_API_KEY_1" in st.secrets and st.secrets["GEMINI_API_KEY_1"]:
+    api_keys.append(st.secrets["GEMINI_API_KEY_1"])
+if "GEMINI_API_KEY_2" in st.secrets and st.secrets["GEMINI_API_KEY_2"]:
+    api_keys.append(st.secrets["GEMINI_API_KEY_2"])
+if "GEMINI_API_KEY_3" in st.secrets and st.secrets["GEMINI_API_KEY_3"]:
+    api_keys.append(st.secrets["GEMINI_API_KEY_3"])
+
+if not api_keys and "GEMINI_API_KEY" in st.secrets:
+    api_keys.append(st.secrets["GEMINI_API_KEY"])
+
+if not api_keys:
+    st.error("API Key Gemini belum diatur di menu Secrets!")
+    st.stop()
+
+# ==============================================================================
+# 4. KONFIGURASI SISTEM INSTRUKSI (DOKUMEN MEWAH, WARNA OTOMATIS, TANPA ZEBRA)
+# ==============================================================================
+ai_config = types.GenerateContentConfig(
+    system_instruction=(
+        "Anda adalah SeHe.AI, asisten super cerdas berkemampuan tinggi di bidang perikanan pesisir "
+        "dan administrasi pendidikan/sekolah. "
+        "TUGAS UTAMA: Anda wajib mematuhi dan memasukkan SETIAP poin data yang diminta pengguna atau yang termuat dalam file rujukan secara utuh tanpa ada yang dikurangi/disingkat. "
+        "PENTING 1: Jika pengguna menanyakan cuaca, tinggi gelombang, atau data terkini, WAJIB gunakan alat Google Search. "
+        "PENTING 2: Jika pengguna meminta tabel, laporan, kurikulum, proposal, RPP, atau draf administrasi, "
+        "Anda WAJIB menampilkannya secara UTUH, PANJANG, DAN DETAIL dalam bentuk dokumen HTML murni dengan inline CSS yang elegan (TANPA tag markdown ```html). "
+        "IKUTI ATURAN WAJIB DESAIN DOKUMEN MEWAH & PROFESIONAL BERIKUT: "
+        "- TAMPILAN MONOKROMATIK PREMIUM & MINIMALIS KONTEMPORER. DILARANG KERAS MENGGUNAKAN GAYA ZEBRA STRIPING ATAU BARIS SELANG-SELING. Latar belakang baris data harus bersih polos transparan. "
+        "- WARNA TEMA OTOMATIS: Pilih satu warna tema solid yang mewah berdasarkan topik dokumen (Contoh: Deep Oceanic Blue #014d7c untuk kelautan/perikanan, Emerald Green #0d5c3a untuk pendidikan/sekolah, Charcoal Gray #2d3748 untuk keuangan/anggaran biaya). "
+        "- Gunakan warna tema otomatis pilihan Anda tersebut untuk latar belakang Kepala Tabel (th) dengan teks putih tebal (color: #ffffff !important; font-weight: 600; padding: 12px 14px; text-align: left; letter-spacing: 0.5px;). "
+        "- Desain Garis Pembatas Sleek: Hilangkan seluruh garis vertikal kaku. Hanya gunakan garis horizontal bawah yang tipis transparan di setiap baris data (border-bottom: 1px solid rgba(255,255,255,0.15);). "
+        "- Padding Sel Harus Lega (padding: 12px 14px;) agar teks seimbang, mewah, memiliki ruang napas tinggi, dan mudah dianalisis. "
+        "- Seluruh huruf dokumen wajib berwarna putih terang kontras (color: #ffffff !important;)."
+    ),
+    temperature=0.3,
+    tools=[{"google_search": {}}]
+)
+
+# ==============================================================================
+# 5. SINKRONISASI OTOMATIS FOLDER GOOGLE DRIVE KHUSUS SEHE.AI
+# ==============================================================================
 def baca_data_bantuan_drive(prompt_user):
-    """Fungsi otomatis memindai berkas .txt di folder Google Drive Anda"""
     referensi_drive = ""
     try:
         from googleapiclient.discovery import build
         from google.oauth2.service_account import Credentials
-        
-        # Mengambil data kredensial akun robot dari Streamlit Secrets
         info_kunci = dict(st.secrets["gcp_service_account"])
         kredensial = Credentials.from_service_account_info(info_kunci)
-        
-        # Membuka koneksi resmi ke server Google Drive API v3
         layanan = build('drive', 'v3', credentials=kredensial)
         id_folder = st.secrets["DRIVE_FOLDER_ID"]
-        
-        # Meminta daftar berkas teks biasa (.txt) di dalam folder khusus
         query = f"'{id_folder}' in parents and mimeType = 'text/plain' and trashed = false"
         hasil = layanan.files().list(q=query, fields="files(id, name)").execute()
         berkas_list = hasil.get('files', [])
-        
-        # Membaca isi tulisan di dalam setiap berkas teks yang ditemukan
         for berkas in berkas_list:
             id_berkas = berkas['id']
             konten = layanan.files().get_media(fileId=id_berkas).execute()
             teks_berkas = konten.decode('utf-8')
-            
-            # Memisahkan baris teks berdasarkan pembatas tanda pipa (|)
             for baris in teks_berkas.splitlines():
                 if "|" in baris and not baris.strip().startswith("#"):
                     kata_kunci, isi_informasi = baris.strip().split("|", 1)
-                    # Jika kata kunci ada dalam ketikan pertanyaan pengguna
                     if kata_kunci.lower().strip() in prompt_user.lower():
                         referensi_drive += f"\n[REFERENSI DRIVE - {berkas['name']}]: {isi_informasi.strip()}\n"
-                        
     except Exception as e:
-        # Pengaman: Jika folder kosong atau gagal koneksi, sistem tidak akan crash
         pass
-        
     return referensi_drive
 
+# ==============================================================================
+# 6. WADAH RIWAYAT PERCAKAPAN KHUSUS TAMPILAN LAYAR
+# ==============================================================================
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
 # =====================================================================
-# 8. KOLOM INPUT CHAT UTAMA SEHE.AI (VERSI SINKRONISASI DRIVE JALUR KUNCI)
+# 7. MENAMPILKAN RIWAYAT CHAT DI LAYAR WEB
 # =====================================================================
-if prompt := st.chat_input("Tanya sesuatu ke SeHe.AI..."):
-    st.chat_message("user", avatar="👤").markdown(prompt)
-    st.session_state.messages.append({"role": "user", "content": prompt})
+for i, message in enumerate(st.session_state.messages):
+    avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
+    with st.chat_message(message["role"], avatar=avatar_icon):
+        st.markdown(message["content"], unsafe_allow_html=True)
 
-    ai_response = None
-    last_error_msg = ""
-    
+# =====================================================================
+# 8. AREA FITUR BARU: PERINTAH CEPAT (QUICK PROMPTS KAPASITAS BEBAS BIAYA)
+# =====================================================================
+st.write("### 🎯 Rekomendasi Pintasan Cepat")
+cp1, cp2, cp3 = st.columns(3)
+prompt_pilihan = None
 
-        # Perulangan otomatis mencoba setiap API Key yang terdaftar secara tangguh
-    for idx, current_key in enumerate(api_keys):
-        try:
-            with st.spinner(f"SeHe.AI sedang mengarungi lautan data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
-                temp_client = genai.Client(api_key=current_key)
-                
-                # UBAH STRUKTUR LOGIKA DI SINI AGAR VARIABEL STABIL:
-                teks_tanya = str(prompt) # Mengunci teks ketikan pengguna ke variabel baru
-                
-                # Jalankan pemindaian otomatis ke Drive menggunakan variabel baru yang stabil
-                referensi_lokal = baca_data_bantuan_drive(teks_tanya)
-                
-                # Jika kecocokan data ditemukan di Drive, gabungkan ke dalam pertanyaan Gemini
-                pesan_akhir = teks_tanya
-                if referensi_lokal:
-                    pesan_akhir = f"{referensi_lokal}\n\nPertanyaan Pengguna: {teks_tanya}"
+with cp1:
+    if st.button("⛅ Cek Kondisi Cuaca & Gelombang", use_container_width=True):
+        prompt_pilihan = "Bagaimana kondisi cuaca, suhu, arah angin, dan tinggi gelombang laut di wilayah pesisir hari ini? Berikan analisis kelayakan aman atau tidaknya untuk melaut."
+with cp2:
+    if st.button("🦪 Panduan Budidaya Mutiara", use_container_width=True):
+        prompt_pilihan = "Tolong buatkan panduan komprehensif teknis budidaya kerang mutiara (Pinctada maxima) dengan metode longline secara lengkap."
+with cp3:
+    if st.button("🏫 Buat Administrasi Kelas", use_container_width=True):
+        prompt_pilihan = "Buatkan saya draf perangkat administrasi kelas atau rancangan modul ajar kurikulum formal dalam bentuk tabel HTML mewah yang tertulis secara lengkap."
 
-                response = temp_client.models.generate_content(
-                    model='gemini-3.1-flash-lite',
-                    contents=pesan_akhir,
-                    config=ai_config
-                )
-                
-                if response and hasattr(response, 'text'):
-                    ai_response = response.text
-                    break  # Berhasil mendapatkan jawaban, keluar dari perulangan kunci
+# AREA HUBUNGAN FILE DATA PENDUKUNG (WORD & PDF SEPAKAT MAKS 10MB)
+st.write("### 📄 Lampirkan Dokumen Rujukan (.PDF / .DOCX)")
+file_pendukung = st.file_uploader("Unggah file kurikulum, RPP asli, atau proposal dari HP/Drive Anda sebagai basis data rujukan SeHe.AI:", type=["pdf", "docx"])
 
-        except Exception as e:
-            last_error_msg = str(e)
-            if idx < len(api_keys) - 1:
-                continue
-            else:
-                st.error("⚠️ Seluruh jalur kunci gratis Anda sedang padat. Silakan klik tombol 'Bersihkan Riwayat' di atas dan coba kirim ulang pesan Anda.")
-                ai_response = None
+# Logika penentuan prompt akhir dari chat input atau tombol pintasan cepat
+prompt_input = st.chat_input("Tanya sesuatu ke SeHe.AI...")
+final_prompt = prompt_input if prompt_input else prompt_pilihan
 
-    # Tampilkan jawaban akhir di layar web dengan avatar ikan
-    if ai_response is not None:
-        with st.chat_message("assistant", avatar="🐟"):
-            # 1. Tampilkan konten utama AI di layar web Streamlit
-            st.markdown(ai_response, unsafe_allow_html=True)
-            
-            # 2. Proses enkripsi berkas HTML ke Base64 (Model 1: Warna Dinamis Mengikuti AI)
-            import base64
-            
-            # Kerangka MSO Word yang patuh pada inline-style warna buatan AI
-            html_wrapped = f"""
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-                  xmlns:w='urn:schemas-microsoft-com:office:word' 
-                  xmlns='http://w3.org'>
-            <head>
-                <meta charset="utf-8">
-                <title>Dokumen SeHe AI</title>
-                <!--[if gte mso 9]>
-                <xml>
-                    <w:WordDocument>
-                        <w:View>Print</w:View>
-                        <w:Zoom>100</w:Zoom>
-                        <w:DoNotOptimizeForBrowser/>
-                    </w:WordDocument>
-                </xml>
-                <![endif]-->
-                <style>
-                    /* Aturan dasar kertas A4 Portrait untuk Microsoft Word */
-                    @page {{
-                        size: 21cm 29.7cm;
-                        margin: 2.54cm 2.54cm 2.54cm 2.54cm;
-                    }}
-                    body {{ 
-                        font-family: 'Segoe UI', Arial, sans-serif; 
-                        padding: 0px; 
-                        line-height: 1.5; 
-                        background-color: #ffffff;
-                        color: #000000; /* Warna dasar teks hitam agar kontras saat di Word */
-                    }}
-                    /* Pengaturan dasar tabel tanpa memaksakan warna kaku */
-                    table {{ 
-                        border-collapse: collapse; 
-                        width: 100%; 
-                        margin: 18px 0; 
-                    }}
-                    th, td {{ 
-                        border: 1px solid #cbd5e1; 
-                        padding: 8px 12px; 
-                    }}
-                </style>
-            </head>
-            <body>
-                {ai_response}
-            </body>
-            </html>
-            """
-            
-            # Enkripsi kode agar bisa diunduh instan tanpa reload halaman
-            b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
-            new_idx = len(st.session_state.messages)
-            
-            # 3. Tampilkan Dua Tombol Berjejer Estetis (Cetak PDF & Simpan HTML untuk Word)
-            st.markdown(f"""
-                <div class="action-buttons-container">
-                    <!-- Tombol Cetak / Jendela PDF -->
-                    <button class="btn-action btn-blue" onclick="window.print()">
-                        🖨️ Cetak / PDF
-                    </button>
-                    <!-- Tombol Unduh HTML yang Kompatibel dengan Desain Cerdas Word -->
-                    <a class="btn-action btn-green" href="data:text/html;base64,{b64_html}" download="Dokumen_SeHe_AI_{new_idx}.html">
-                        💾 Simpan .HTML
-                    </a>
-                </div>
-            """, unsafe_allow_html=True)
-            
-        st.session_state.messages.append({"role": "assistant", "content": ai_response})
+if final_prompt:
+    # Proteksi Ukuran File Terlebih Dahulu Sebelum Memulai Pengiriman (Batas 10MB)
+    file_valid = True
+    if file_pendukung is not None:
+        ukuran_file_mb = file_pendukung.size / (1024 * 1024)
+        if ukuran_file_mb > 10.0:
+            file_valid = False
 
+    if not file_valid:
+        st.error("⚠️ File terlalu besar (Maksimal 10 MB) agar proses membaca cepat dan instan. Silakan kompres dokumen Anda sebelum diunggah.")
     else:
-        st.error(f"Gagal mendapatkan respons dari server Google AI Studio. Detail error terakhir: {last_error_msg}")
+        st.chat_message("user", avatar="👤").markdown(final_prompt)
+        st.session_state.messages.append({"role": "user", "content": final_prompt})
+
+        ai_response = None
+        last_error_msg = ""
+        paket_konten = []
+        
+        # Proses pembacaan dokumen rujukan lokal (Upload HP/Drive)
+        if file_pendukung is not None:
+            nama_file = file_pendukung.name.lower()
+            if nama_file.endswith('.docx'):
+                try:
+                    doc = Document(io.BytesIO(file_pendukung.read()))
+                    teks_word = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+                    paket_konten.append(f"[DOKUMEN RUJUKAN UTAMA WORD]:\n{teks_word}\n\n")
+                except Exception as e:
+                    st.warning(f"Gagal membaca file Word: {e}")
+            elif nama_file.endswith('.pdf'):
+                try:
+                    pdf_data = file_pendukung.read()
+                    paket_konten.append(
+                        types.Part.from_bytes(
+                            data=pdf_data,
+                            mime_type="application/pdf"
+                        )
+                    )
+                except Exception as e:
+                    st.warning(f"Gagal memproses file PDF: {e}")
+
+        # Jalankan pemindaian otomatis ke Drive latar belakang via kata kunci pipa (|)
+        teks_tanya = str(final_prompt)
+        referensi_lokal = baca_data_bantuan_drive(teks_tanya)
+        if referensi_lokal:
+            paket_konten.append(f"{referensi_lokal}\n\n")
+            
+        # Gabungkan teks pertanyaan utama pengguna ke paket pengiriman
+        paket_konten.append(teks_tanya)
+
+        # Perulangan otomatis mencoba ketiga API Key secara bergantian jika terjadi Error 429
+        for idx, current_key in enumerate(api_keys):
+            try:
+                with st.spinner(f"SeHe.AI sedang membedah data (Jalur Kunci {idx+1}/{len(api_keys)})..."):
+                    temp_client = genai.Client(api_key=current_key)
+                    response = temp_client.models.generate_content(
+                        model='gemini-3.1-flash.lite',
+                        contents=paket_konten,
+                        config=ai_config
+                    )
+                    
+                    if response and hasattr(response, 'text'):
+                        ai_response = response.text
+                        break 
+            except Exception as e:
+                last_error_msg = str(e)
+                if "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
+                    if idx < len(api_keys) - 1:
+                        continue 
+                    else:
+                        st.error("⚠️ Seluruh 3 jalur kunci gratis Anda sedang padat. Silakan klik tombol 'Bersihkan Riwayat' di atas dan coba kirim ulang pesan Anda.")
+                        ai_response = None
+                else:
+                    ai_response = f"Terjadi kesalahan sistem: {last_error_msg}. Pastikan internet Anda aktif."
+                    break
+
+        # Tampilkan jawaban akhir di layar web dengan avatar ikan
+        if ai_response is not None:
+            with st.chat_message("assistant", avatar="🐟"):
+                st.markdown(ai_response, unsafe_allow_html=True)
+                
+                # Proses pembungkusan dokumen HTML formal MSO Word murni
+                html_wrapped = f"""
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                      xmlns:w='urn:schemas-microsoft-com:office:word' 
+                      xmlns='http://w3.org'>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Dokumen SeHe AI</title>
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <w:WordDocument>
+                            <w:View>Print</w:View>
+                            <w:Zoom>100</w:Zoom>
+                            <w:DoNotOptimizeForBrowser/>
+                        </w:WordDocument>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        @page {{
+                            size: 21cm 29.7cm;
+                            margin: 2.54cm 2.54cm 2.54cm 2.54cm;
+                        }}
+                        body {{ 
+                            font-family: 'Segoe UI', Arial, sans-serif; 
+                            padding: 0px; 
+                            line-height: 1.5; 
+                            background-color: #ffffff;
+                            color: #000000;
+                        }}
+                        table {{ 
+                            border-collapse: collapse; 
+                            width: 100%; 
+                            margin: 18px 0; 
+                        }}
+                        th, td {{ 
+                            border: 1px solid #cbd5e1; 
+                            padding: 8px 12px; 
+                        }}
+                    </style>
+                </head>
+                <body>
+                    {ai_response}
+                </body>
+                </html>
+                """
+                
+                b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
+                new_idx = len(st.session_state.messages)
+                
+                # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
+                st.markdown(f"""
+                    <div class="action-buttons-container">
+                        <button class="btn-action btn-blue" onclick="window.print()">
+                            🖨️ Cetak / PDF
+                        </button>
+                        <a class="btn-action btn-green" href="data:text/html;base64,{b64_html}" download="Dokumen_SeHe_AI_{new_idx}.html">
+                            💾 Simpan .HTML
+                        </a>
+                    </div>
+                """, unsafe_allow_html=True)
+                
+            st.session_state.messages.append({"role": "assistant", "content": ai_response})
+            st.rerun()
+        else:
+            if "429" not in last_error_msg and "RESOURCE_EXHAUSTED" not in last_error_msg:
+                st.error(f"Gagal mendapatkan respons dari server Google AI Studio. Detail: {last_error_msg}")
