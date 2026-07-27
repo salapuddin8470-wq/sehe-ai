@@ -416,7 +416,7 @@ if final_prompt:
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
             # Daftar model yang dicoba secara berurutan per API Key
-            daftar_model = ['gemini-2.5-flash', 'gemini-1.5-flash']
+            daftar_model = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
             
             for target_model in daftar_model:
                 try:
