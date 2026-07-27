@@ -285,7 +285,7 @@ if "messages" not in st.session_state:
 
 
 # =====================================================================
-# 7. MENAMPILKAN RIWAYAT CHAT DI LAYAR WEB (BARIS 288)
+# 7. MENAMPILKAN RIWAYAT CHAT DI LAYAR WEB (PERBAIKAN TOTAL BARIS 288-450)
 # =====================================================================
 for i, message in enumerate(st.session_state.messages):
     avatar_icon = "🐟" if message["role"] == "assistant" else "👤"
@@ -293,15 +293,15 @@ for i, message in enumerate(st.session_state.messages):
         st.markdown(message["content"], unsafe_allow_html=True)
         
         if message["role"] == "assistant":
-            # Struktur CSS Word dipisah murni agar aman dari sensor matematika Python
-            css_word_hist = "@page { size: 21cm 29.7cm; margin: 2.54cm; } body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff; color: #1e293b; } table { border-collapse: collapse; width: 100%; margin: 20px 0; } th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; } td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; } th, td { border-left: none !important; border-right: none !important; }"
+            # Mengunci string CSS tanpa baris baru berlapis agar aman dari sensor desimal Python
+            css_word_hist = "@page { size: 21cm 29.7cm; margin: 2.54cm; mso-page-orientation: portrait; } body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; } table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; } th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; } td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; } th, td { border-left: none !important; border-right: none !important; }"
             
-            html_wrapped_hist = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_hist + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
+            html_wrapped_hist = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>" + css_word_hist + "</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"
             
             html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", message["content"])
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
             
-            # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi untuk Riwayat Obrolan
+            # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi Khusus Riwayat Chat
             st.markdown(f"""
                 <div class="action-buttons-container">
                     <button class="btn-action btn-blue" onclick="window.print()">
