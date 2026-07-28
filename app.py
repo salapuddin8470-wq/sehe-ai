@@ -419,6 +419,13 @@ if final_prompt:
         # Gabungkan teks pertanyaan utama pengguna ke paket pengiriman
         paket_konten.append(teks_tanya)
 
+        # =====================================================================
+        # OPTIMALISASI KETAT: Bersihkan Dokumen Duplikat Jika Ini Pesan Lanjutan
+        # =====================================================================
+        # Jika riwayat sudah ada, jangan kirim ulang dokumen besar agar kuota API hemat 90%
+        if len(st.session_state.messages) > 1:
+            paket_konten = [teks_tanya]
+
         # Perulangan otomatis mencoba API Key dan cadangan model jika server sibuk
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
@@ -439,8 +446,6 @@ if final_prompt:
                                 )
                             )
 
-
-                        
                         # AKTIFKAN MODE CHAT BERKELANJUTAN: Buat sesi chat dengan membawa memori riwayat di atas
                         chat_session = temp_client.chats.create(
                             model=target_model,
@@ -448,7 +453,7 @@ if final_prompt:
                             history=riwayat_gemini
                         )
                         
-                        # Kirim paket konten terbaru (pesan baru + lampiran file jika ada) ke sesi chat
+                        # Kirim paket konten terbaru (pesan baru) ke sesi chat
                         response = chat_session.send_message(message=paket_konten)
                         
                         if response and hasattr(response, 'text'):
@@ -460,7 +465,6 @@ if final_prompt:
                     
                     # LOGIKA OPTIMAL: Jika terkena kuota habis / batas detik harian
                     if "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
-                        # Tambahkan jeda 2 detik sebelum pindah kunci agar server Google siap menerima koneksi baru
                         import time
                         time.sleep(2)
                         break  # Keluar dari loop model saat ini, lanjut ke API Key berikutnya
@@ -471,11 +475,11 @@ if final_prompt:
                     else:
                         break
 
-
-            
+            # Keluar dari loop API Key utama jika salah satu kunci sukses mendapatkan jawaban
             if sukses_merespons:
-                break # Keluar dari loop API Key karena sudah dapat jawaban
+                break 
             
+            # Jika sudah berada di ujung kunci terakhir dan semua jalur tetap gagal total
             if idx == len(api_keys) - 1 and not sukses_merespons:
                 st.error("⚠️ Seluruh jalur kunci dan model cadangan SeHe.AI sedang padat di server Google. Silakan tunggu 10 detik lalu kirim ulang pesan Anda.")
                 ai_response = None
