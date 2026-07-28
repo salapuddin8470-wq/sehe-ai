@@ -318,9 +318,9 @@ for i, message in enumerate(st.session_state.messages):
             html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", message["content"])
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
             
-                # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
-                # Menggunakan manipulasi gaya murni agar CSS mewah Anda tetap bekerja penuh
-                html_tombol = """
+            # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
+            # Menggunakan manipulasi gaya murni agar CSS mewah Anda tetap bekerja penuh
+            html_tombol = """
                 <div class="action-buttons-container">
                     <button class="btn-action btn-blue" onclick="parent.window.print()">
                         🖨️ Cetak / PDF
