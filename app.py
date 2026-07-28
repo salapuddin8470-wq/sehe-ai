@@ -330,15 +330,11 @@ for i, message in enumerate(st.session_state.messages):
                 </a>
             </div>
             """
-            # Ganti data base64 dokumen dan index baru ke dalam string tombol secara presisi
-            html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
-
-            
+            # PERBAIKAN: Menggunakan b64_html_hist dan INDEX (bukan INDEX_BARU) agar sinkron dengan Bagian 7
+            html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html_hist).replace("INDEX_BARU", str(i))
+           
             # Baris ini juga harus sejajar lurus di bawahnya
             st.markdown(html_tombol, unsafe_allow_html=True)
-
-
-
 
 # =====================================================================
 # 8. AREA FITUR BARU: PERINTAH CEPAT (3 NAVIGASI MARITIM MEWAH BENING)
