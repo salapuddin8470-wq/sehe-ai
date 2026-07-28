@@ -429,16 +429,16 @@ if final_prompt:
                     with st.spinner(f"SeHe.AI membedah data ({target_model} | Jalur {idx+1}/{len(api_keys)})..."):
                         temp_client = genai.Client(api_key=current_key)
                         
-                        # FORMAT RIWAYAT: Ubah format internal Streamlit ke format yang dikenali Gemini SDK terbaru
+                        # FORMAT RIWAYAT: Pastikan sejajar lurus dengan baris temp_client di atasnya
                         riwayat_gemini = []
-                        # UBAH BARIS INI: Batasi riwayat menggunakan slicing [-5:-1] agar hanya mengingat 4 pesan terdekat
-                   for msg in st.session_state.messages[-5:-1]:
-                       riwayat_gemini.append(
-                       types.Content(
-                       role="model" if msg["role"] == "assistant" else "user",
-                       parts=[types.Part.from_text(text=msg["content"])]
-                              )
-                       )
+                        for msg in st.session_state.messages[-5:-1]:
+                            riwayat_gemini.append(
+                                types.Content(
+                                    role="model" if msg["role"] == "assistant" else "user",
+                                    parts=[types.Part.from_text(text=msg["content"])]
+                                )
+                            )
+
 
                         
                         # AKTIFKAN MODE CHAT BERKELANJUTAN: Buat sesi chat dengan membawa memori riwayat di atas
