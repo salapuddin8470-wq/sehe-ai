@@ -450,7 +450,7 @@ if final_prompt:
                         )
                         
                         # Kirim paket konten terbaru (pesan baru + lampiran file jika ada) ke sesi chat
-                        response = chat_session.send_message(contents=paket_konten)
+                        response = chat_session.send_message(message=paket_konten)
                         
                         if response and hasattr(response, 'text'):
                             ai_response = response.text
