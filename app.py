@@ -431,7 +431,7 @@ if final_prompt:
                         
                         # FORMAT RIWAYAT: Pastikan sejajar lurus dengan baris temp_client di atasnya
                         riwayat_gemini = []
-                        for msg in st.session_state.messages[-5:-1]:
+                        for msg in st.session_state.messages[-3:-1]:
                             riwayat_gemini.append(
                                 types.Content(
                                     role="model" if msg["role"] == "assistant" else "user",
