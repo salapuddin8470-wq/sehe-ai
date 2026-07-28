@@ -332,9 +332,9 @@ for i, message in enumerate(st.session_state.messages):
                 """
 
             html_tombol_hist = html_tombol_hist.replace("B64_DATA_DOKUMEN", b64_html_hist).replace("INDEX", str(i))
-                # Ganti st.markdown lama dengan komponen HTML Streamlit agar Javascript 'print' diizinkan
-                import streamlit.components.v1 as components
-                components.html(html_tombol, height=80)
+            # Ganti st.markdown lama dengan komponen HTML Streamlit agar Javascript 'print' diizinkan
+            import streamlit.components.v1 as components
+            components.html(html_tombol, height=80)
 
 
 # =====================================================================
