@@ -498,7 +498,7 @@ if final_prompt:
                 html_wrapped = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_style + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
                 
                 html_wrapped = html_wrapped.replace("DOKUMEN_SEHE_AI_CONTENT", ai_response)
-                b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
+                b64_html_hist = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
                 new_idx = len(st.session_state.messages)
                 
                 # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Simpan Word & Simpan HTML)
