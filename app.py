@@ -457,10 +457,19 @@ if final_prompt:
                             break # Sukses, keluar dari loop model
                 except Exception as e:
                     last_error_msg = str(e)
-                    if "503" in last_error_msg or "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
-                        continue
+                    
+                    # LOGIKA OPTIMAL: Jika kuota habis (429), langsung break loop model agar pindah ke API Key berikutnya
+                    if "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
+                        break  # Keluar dari loop model ini, otomatis memicu perulangan beralih ke kunci selanjutnya
+                    
+                    # Jika server sibuk sementara (503), tetap aman untuk mencoba model cadangan (gemini-3.5-flash)
+                    elif "503" in last_error_msg:
+                        continue  
+                    
+                    # Jika terjadi error jenis lain (misal masalah jaringan lokal), hentikan proses pengiriman
                     else:
-                        break # Jika error tipe lain, langsung hentikan loop model
+                        break
+
             
             if sukses_merespons:
                 break # Keluar dari loop API Key karena sudah dapat jawaban
