@@ -243,9 +243,9 @@ ai_config = types.GenerateContentConfig(
         "- TAMPILAN MONOKROMATIK PREMIUM & MINIMALIS KONTEMPORER. DILARANG KERAS MENGGUNAKAN GAYA ZEBRA STRIPING ATAU BARIS SELANG-SELING. Latar belakang baris data harus bersih polos transparan. "
         "- WARNA TEMA OTOMATIS: Pilih satu warna tema solid yang mewah berdasarkan topik dokumen (Contoh: Deep Oceanic Blue #014d7c untuk kelautan/perikanan/cuaca, Emerald Green #0d5c3a untuk pendidikan/sekolah, Charcoal Gray #2d3748 untuk keuangan/anggaran biaya). "
         "- Gunakan warna tema otomatis pilihan Anda tersebut untuk latar belakang Kepala Tabel (th) dengan teks putih tebal (color: #ffffff !important; font-weight: 600; padding: 12px 14px; text-align: left; letter-spacing: 0.5px;). "
-        "- Desain Garis Pembatas Sleek: Hilangkan seluruh garis vertikal kaku. Hanya gunakan garis horizontal bawah yang tipis transparan di setiap baris data (border-bottom: 1px solid rgba(255,255,255,0.15);). "
+        "- Desain Garis Pembatas Sleek: Hilangkan seluruh garis vertikal kaku. Hanya gunakan garis horizontal bawah yang tipis gelap transparan di setiap baris data (border-bottom: 1px solid #e2e8f0;). "
         "- Padding Sel Harus Lega (padding: 12px 14px;) agar teks seimbang, mewah, memiliki ruang napas tinggi, dan mudah dianalisis. "
-        "- Seluruh huruf dokumen wajib berwarna putih terang kontras (color: #ffffff !important;)."
+        "- KONTRAST TEKS DOKUMEN: Seluruh huruf isi konten, paragraf, dan isi data tabel wajib menggunakan warna gelap arang profesional (color: #1e293b !important;) agar terbaca sempurna di kertas putih saat dibuka di Word atau PDF, dengan pengecualian teks di dalam Kepala Tabel (th) yang tetap putih."
     ),
     temperature=0.3,
     tools=[{"google_search": {}}]
