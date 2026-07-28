@@ -318,24 +318,24 @@ for i, message in enumerate(st.session_state.messages):
             html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", message["content"])
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
             
-            # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Simpan Word & Simpan HTML)
+        if message["role"] == "assistant":
+            # Pastikan jarak spasi di depan variabel ini sama persis
             html_tombol = """
-                <div class="action-buttons-container">
-                    <a class="btn-action btn-blue" href="data:application/msword;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.doc">
-                        📝 Simpan .WORD
-                    </a>
-                    <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.html">
-                        💾 Simpan .HTML
-                    </a>
-                </div>
-                """
+            <div class="action-buttons-container">
+                <a class="btn-action btn-blue" href="data:application/msword;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.doc">
+                    📝 Simpan .WORD
+                </a>
+                <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.html">
+                    💾 Simpan .HTML
+                </a>
+            </div>
+            """
+            # SEJAJAR TEGAK LURUS: Hapus kelebihan spasi di depan baris ini agar lurus dengan huruf 'h' di atas
+            html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
+            
+            # Baris ini juga harus sejajar lurus di bawahnya
+            st.markdown(html_tombol, unsafe_allow_html=True)
 
-
-                # Lakukan proses replace seperti biasa
-                  html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
-                
-                # Kirim langsung menggunakan st.markdown agar tampilan tombol rapi dan presisi
-                st.markdown(html_tombol, unsafe_allow_html=True)
 
 
 
