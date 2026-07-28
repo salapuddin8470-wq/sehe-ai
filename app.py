@@ -471,10 +471,11 @@ if final_prompt:
                 # =============================================================
                 css_bag_1 = "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
                 css_bag_2 = "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; } "
-                css_bag_3 = "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; } "
-                css_bag_4 = "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; } "
-                css_bag_5 = "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; } "
-                css_bag_6 = "th, td { border-left: none !important; border-right: none !important; }"
+                css_bag_3 = "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; } "
+                css_bag_4 = "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; text-align: left; } "
+                css_bag_5 = "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; background-color: transparent; } "
+                css_bag_6 = "tr td:first-child { font-weight: bold; color: #0f172a !important; } th, td { border-left: none !important; border-right: none !important; }"
+
                 
                 css_word_style = css_bag_1 + css_bag_2 + css_bag_3 + css_bag_4 + css_bag_5 + css_bag_6
                 
