@@ -458,17 +458,19 @@ if final_prompt:
                 except Exception as e:
                     last_error_msg = str(e)
                     
-                    # LOGIKA OPTIMAL: Jika kuota habis (429), langsung break loop model agar pindah ke API Key berikutnya
+                    # LOGIKA OPTIMAL: Jika terkena kuota habis / batas detik harian
                     if "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
-                        break  # Keluar dari loop model ini, otomatis memicu perulangan beralih ke kunci selanjutnya
+                        # Tambahkan jeda 2 detik sebelum pindah kunci agar server Google siap menerima koneksi baru
+                        import time
+                        time.sleep(2)
+                        break  # Keluar dari loop model saat ini, lanjut ke API Key berikutnya
                     
-                    # Jika server sibuk sementara (503), tetap aman untuk mencoba model cadangan (gemini-3.5-flash)
                     elif "503" in last_error_msg:
                         continue  
                     
-                    # Jika terjadi error jenis lain (misal masalah jaringan lokal), hentikan proses pengiriman
                     else:
                         break
+
 
             
             if sukses_merespons:
