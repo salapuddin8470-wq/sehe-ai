@@ -426,7 +426,7 @@ if final_prompt:
         # Perulangan otomatis mencoba API Key dan cadangan model jika server sibuk
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
-            daftar_model = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
+            daftar_model = ['gemini-2.5-flash', 'gemini-3.5-flash']
             
             for target_model in daftar_model:
                 try:
