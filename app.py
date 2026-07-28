@@ -318,23 +318,25 @@ for i, message in enumerate(st.session_state.messages):
             html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", message["content"])
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
             
-            # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
-            # Menggunakan manipulasi gaya murni agar CSS mewah Anda tetap bekerja penuh
+            # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Simpan Word & Simpan HTML)
             html_tombol = """
                 <div class="action-buttons-container">
-                    <button class="btn-action btn-blue" onclick="parent.window.print()">
-                        🖨️ Cetak / PDF
-                    </button>
+                    <a class="btn-action btn-blue" href="data:application/msword;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.doc">
+                        📝 Simpan .WORD
+                    </a>
                     <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.html">
                         💾 Simpan .HTML
                     </a>
                 </div>
                 """
 
-            html_tombol_hist = html_tombol_hist.replace("B64_DATA_DOKUMEN", b64_html_hist).replace("INDEX", str(i))
-            # Ganti st.markdown lama dengan komponen HTML Streamlit agar Javascript 'print' diizinkan
-            import streamlit.components.v1 as components
-            components.html(html_tombol, height=80)
+
+                # Lakukan proses replace seperti biasa
+                html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
+                
+                # Kirim langsung menggunakan st.markdown agar tampilan tombol rapi dan presisi
+                st.markdown(html_tombol, unsafe_allow_html=True)
+
 
 
 # =====================================================================
@@ -486,25 +488,25 @@ if final_prompt:
                 b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
                 new_idx = len(st.session_state.messages)
                 
-                # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Cetak PDF & Simpan HTML)
-                # Menggunakan manipulasi gaya murni agar CSS mewah Anda tetap bekerja penuh
+                # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Simpan Word & Simpan HTML)
                 html_tombol = """
                 <div class="action-buttons-container">
-                    <button class="btn-action btn-blue" onclick="parent.window.print()">
-                        🖨️ Cetak / PDF
-                    </button>
+                    <a class="btn-action btn-blue" href="data:application/msword;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.doc">
+                        📝 Simpan .WORD
+                    </a>
                     <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.html">
                         💾 Simpan .HTML
                     </a>
                 </div>
                 """
 
-                html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
-                # Ganti st.markdown lama dengan komponen HTML Streamlit agar Javascript 'print' diizinkan
-                import streamlit.components.v1 as components
-                components.html(html_tombol, height=80)
-
+                # Lakukan proses replace seperti biasa
+                html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
                 
+                # Kirim langsung menggunakan st.markdown agar tampilan tombol rapi dan presisi
+                st.markdown(html_tombol, unsafe_allow_html=True)
+
+             
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
         else:
             if "429" not in last_error_msg and "RESOURCE_EXHAUSTED" not in last_error_msg:
