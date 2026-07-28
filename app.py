@@ -67,70 +67,72 @@ st.markdown("""
     }
     [data-testid="stChatInput"] textarea { color: #0f172a !important; font-weight: 500 !important; }
     
-    /* Styling Elemen Kotak Unggah File */
+        /* Styling Elemen Kotak Unggah File (GLASSMORPHISM LAUT BENING) */
     [data-testid="stFileUploader"] {
-        background-color: rgba(255, 255, 255, 0.02) !important;
-        border: 1px dashed rgba(255, 255, 255, 0.15) !important;
-        padding: 12px !important;
-        border-radius: 12px !important;
-        margin-bottom: 15px;
-    }
-    
-    /* STYLING TOMBOL PINTASAN CEPAT (GLASSMORPHISM MEWAH GLOWING - ANTI PUTIH POLOS) */
-    div[data-testid="stColumn"] button {
-        background: rgba(3, 169, 244, 0.05) !important;
+        background-color: rgba(255, 255, 255, 0.03) !important;
         backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(3, 169, 244, 0.25) !important;
-        border-radius: 12px !important;
-        color: #03a9f4 !important;
-        font-weight: 600 !important;
-        padding: 12px 10px !important;
+        border: 2px dashed rgba(3, 169, 244, 0.3) !important;
+        padding: 20px !important;
+        border-radius: 16px !important;
+        margin-bottom: 25px;
         transition: all 0.3s ease !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: inset 0 0 12px rgba(3, 169, 244, 0.05) !important;
     }
-    div[data-testid="stColumn"] button:hover {
-        background: rgba(3, 169, 244, 0.15) !important;
-        border: 1px solid #03a9f4 !important;
+    [data-testid="stFileUploader"]:hover {
+        border-color: #03a9f4 !important;
+        background-color: rgba(3, 169, 244, 0.05) !important;
+        box-shadow: 0 0 15px rgba(3, 169, 244, 0.15) !important;
+    }
+    /* Memaksa warna teks nama file/petunjuk upload agar menyala putih */
+    [data-testid="stFileUploader"] section div, [data-testid="stFileUploader"] text, [data-testid="stFileUploader"] span {
         color: #ffffff !important;
-        box-shadow: 0 0 15px rgba(3, 169, 244, 0.5) !important;
-        transform: translateY(-2px);
+        font-weight: 500 !important;
     }
     
-    /* STYLING KUSTOM TOMBOL CETAK & SIMPAN AGAR MEWAH & KONTRAS (TIDAK SAMAR) */
+    /* STYLING KUSTOM TOMBOL CETAK & SIMPAN AGAR MEWAH GRADASI BERKILAU */
     .action-buttons-container {
         display: flex;
-        gap: 12px;
-        margin-top: 15px;
-        margin-bottom: 10px;
+        gap: 15px;
+        margin-top: 18px;
+        margin-bottom: 12px;
     }
     .btn-action {
-        padding: 10px 20px;
-        border-radius: 8px;
+        padding: 12px 24px;
+        border-radius: 12px;
         font-size: 14px;
         font-weight: 600;
         text-decoration: none;
         border: none;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    }
-    .btn-action:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+        gap: 8px;
     }
     .btn-blue {
-        background-color: #0288d1 !important;
+        background: linear-gradient(135deg, #0288d1 0%, #005691 100%) !important;
         color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 4px 15px rgba(2, 136, 209, 0.3) !important;
     }
-    .btn-blue:hover { background-color: #039be5 !important; }
+    .btn-blue:hover { 
+        background: linear-gradient(135deg, #039be5 0%, #0288d1 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(3, 155, 229, 0.5) !important;
+    }
     .btn-green {
-        background-color: #2e7d32 !important;
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important;
         color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3) !important;
     }
-    .btn-green:hover { background-color: #388e3c !important; }
+    .btn-green:hover { 
+        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(56, 142, 60, 0.5) !important;
+    }
+
     
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -350,9 +352,10 @@ with cp3:
     if st.button("🌙 Cek Fase Bulan Terkini", use_container_width=True):
         st.session_state.prompt_pilihan = "Bagaimana kondisi fase bulan hari ini secara real-time? Berikan analisis dampaknya terhadap pergerakan kuat-lemah arus air laut dan kelimpahan tangkapan ikan nelayan malam ini."
 
-# AREA HUBUNGAN FILE DATA PENDUKUNG (WORD & PDF SEPAKAT MAKS 10MB)
-st.write("### 📄 Lampirkan Dokumen Rujukan (.PDF / .DOCX)")
-file_pendukung = st.file_uploader("Unggah file kurikulum, RPP asli, atau proposal dari HP/Drive Anda sebagai basis data rujukan SeHe.AI:", type=["pdf", "docx"])
+# AREA HUBUNGAN FILE DATA PENDUKUNG MENGGUNAKAN EXPANDER LIPAT YANG RAPI
+with st.expander("📂 Lampirkan Dokumen Basis Data Rujukan (.PDF / .DOCX)", expanded=False):
+    st.write("Silakan unggah dokumen rujukan di bawah ini sebagai acuan analisis SeHe.AI:")
+    file_pendukung = st.file_uploader("Pilih file dari HP/Drive Anda (Maks 10MB):", type=["pdf", "docx"], label_visibility="collapsed")
 
 # Logika penentuan prompt akhir dari chat input atau tombol pintasan cepat
 prompt_input = st.chat_input("Tanya sesuatu ke SeHe.AI...")
