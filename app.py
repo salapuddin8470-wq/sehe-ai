@@ -330,8 +330,9 @@ for i, message in enumerate(st.session_state.messages):
                 </a>
             </div>
             """
-            # SEJAJAR TEGAK LURUS: Hapus kelebihan spasi di depan baris ini agar lurus dengan huruf 'h' di atas
+            # Ganti data base64 dokumen dan index baru ke dalam string tombol secara presisi
             html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
+
             
             # Baris ini juga harus sejajar lurus di bawahnya
             st.markdown(html_tombol, unsafe_allow_html=True)
