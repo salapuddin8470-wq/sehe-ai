@@ -332,7 +332,7 @@ for i, message in enumerate(st.session_state.messages):
 
 
                 # Lakukan proses replace seperti biasa
-                html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
+                  html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
                 
                 # Kirim langsung menggunakan st.markdown agar tampilan tombol rapi dan presisi
                 st.markdown(html_tombol, unsafe_allow_html=True)
