@@ -422,42 +422,54 @@ if final_prompt:
         # Gabungkan teks pertanyaan utama pengguna ke paket pengiriman
         paket_konten.append(teks_tanya)
 
-        # Perulangan otomatis mencoba API Key dan cadangan model jika server sibuk / Error 429 / Error 503
+        # Perulangan otomatis mencoba API Key dan cadangan model jika server sibuk
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
-            # Daftar model yang dicoba secara berurutan per API Key
             daftar_model = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
             
             for target_model in daftar_model:
                 try:
                     with st.spinner(f"SeHe.AI membedah data ({target_model} | Jalur {idx+1}/{len(api_keys)})..."):
                         temp_client = genai.Client(api_key=current_key)
-                        response = temp_client.models.generate_content(
+                        
+                        # FORMAT RIWAYAT: Ubah format internal Streamlit ke format yang dikenali Gemini SDK terbaru
+                        riwayat_gemini = []
+                        for msg in st.session_state.messages[:-1]:  # Ambil semua pesan KECUALI pesan terakhir yang baru dikirim
+                            riwayat_gemini.append(
+                                types.Content(
+                                    role="model" if msg["role"] == "assistant" else "user",
+                                    parts=[types.Part.from_text(text=msg["content"])]
+                                )
+                            )
+                        
+                        # AKTIFKAN MODE CHAT BERKELANJUTAN: Buat sesi chat dengan membawa memori riwayat di atas
+                        chat_session = temp_client.chats.create(
                             model=target_model,
-                            contents=paket_konten,
-                            config=ai_config
+                            config=ai_config,
+                            history=riwayat_gemini
                         )
+                        
+                        # Kirim paket konten terbaru (pesan baru + lampiran file jika ada) ke sesi chat
+                        response = chat_session.send_message(contents=paket_konten)
                         
                         if response and hasattr(response, 'text'):
                             ai_response = response.text
                             sukses_merespons = True
-                            break # Keluar dari loop model karena sukses
+                            break # Sukses, keluar dari loop model
                 except Exception as e:
                     last_error_msg = str(e)
-                    # Jika error karena server sibuk (503) atau batas limit (429), lanjut coba model berikutnya/key berikutnya
                     if "503" in last_error_msg or "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
                         continue
                     else:
-                        # Jika error tipe lain (misal sinyal putus total), langsung hentikan loop model ini
-                        break
+                        break # Jika error tipe lain, langsung hentikan loop model
             
             if sukses_merespons:
                 break # Keluar dari loop API Key karena sudah dapat jawaban
             
-            # Jika sudah di kunci terakhir dan semua model gagal karena sibuk
             if idx == len(api_keys) - 1 and not sukses_merespons:
                 st.error("⚠️ Seluruh jalur kunci dan model cadangan SeHe.AI sedang padat di server Google. Silakan tunggu 10 detik lalu kirim ulang pesan Anda.")
                 ai_response = None
+
 
             else:
                 ai_response = f"Terjadi kesalahan sistem: {last_error_msg}. Pastikan internet Anda aktif."
