@@ -431,13 +431,15 @@ if final_prompt:
                         
                         # FORMAT RIWAYAT: Ubah format internal Streamlit ke format yang dikenali Gemini SDK terbaru
                         riwayat_gemini = []
-                        for msg in st.session_state.messages[:-1]:  # Ambil semua pesan KECUALI pesan terakhir yang baru dikirim
-                            riwayat_gemini.append(
-                                types.Content(
-                                    role="model" if msg["role"] == "assistant" else "user",
-                                    parts=[types.Part.from_text(text=msg["content"])]
-                                )
-                            )
+                        # UBAH BARIS INI: Batasi riwayat menggunakan slicing [-5:-1] agar hanya mengingat 4 pesan terdekat
+                   for msg in st.session_state.messages[-5:-1]:
+                       riwayat_gemini.append(
+                       types.Content(
+                       role="model" if msg["role"] == "assistant" else "user",
+                       parts=[types.Part.from_text(text=msg["content"])]
+                              )
+                       )
+
                         
                         # AKTIFKAN MODE CHAT BERKELANJUTAN: Buat sesi chat dengan membawa memori riwayat di atas
                         chat_session = temp_client.chats.create(
