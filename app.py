@@ -457,16 +457,15 @@ if final_prompt:
                 st.error("⚠️ Seluruh jalur kunci dan model cadangan SeHe.AI sedang padat di server Google. Silakan tunggu 10 detik lalu kirim ulang pesan Anda.")
                 ai_response = None
 
-        # PERBAIKAN UJUNG KODE: Menampilkan jawaban dan menyimpannya secara permanen ke Riwayat Obrolan
+        # T TAMPILKAN JAWABAN AKHIR DI LAYAR WEB
         if ai_response is not None:
             with st.chat_message("assistant", avatar="🐟"):
                 st.markdown(ai_response, unsafe_allow_html=True)
             
-            # Daftarkan pesan asisten ke memori agar tombol unduh ikut muncul saat halaman disegarkan
+            # Daftarkan pesan ke memori & segarkan layar
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
             st.rerun()
-
-                
+               
                 # =============================================================
                 # SOLUSI TOTAL KEBAL SYNTAXERROR: ENKAPSULASI TEKS HORIZONTAL
                 # =============================================================
