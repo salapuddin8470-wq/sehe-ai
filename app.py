@@ -88,11 +88,13 @@ st.markdown("""
         box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.2) !important;
         padding: 4px !important;
     }
+    /* PERBAIKAN TOTAL: Memaksa teks ketikan kita agar berwarna gelap terang di dalam kotak input */
     [data-testid="stChatInput"] textarea { 
-        color: #ffffff !important; 
+        color: #0f172a !important; /* Warna gelap arang pekat agar tulisan kontras dan jelas */
         font-weight: 500 !important; 
-        background: transparent !important;
+        background: #ffffff !important; /* Memaksa latar belakang tempat mengetik tetap putih bersih */
     }
+
     
     /* 1. KOTAK LUAR UNGGAH FILE (TRANSISI LUAR) */
     [data-testid="stFileUploader"] {
