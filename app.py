@@ -298,7 +298,7 @@ for i, message in enumerate(st.session_state.messages):
         if message["role"] == "assistant":
             css_word_hist = (
                 "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
-                "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; } "
+                "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 140%; background-color: #ffffff !important; color: #1e293b !important; } "
                 "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; } "
                 "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; } "
                 "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; } "
@@ -471,18 +471,18 @@ if final_prompt:
             # SOLUSI TOTAL KEBAL SYNTAXERROR: ENKAPSULASI TEKS HORIZONTAL
             # =============================================================
             css_bag_1 = "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
-            css_bag_2 = "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff; color: #1e293b; } "
+            # PERBAIKAN: Mengganti line-height menjadi 140% agar dikenali Word dengan benar dan tulisan tidak bertumpuk
+            css_bag_2 = "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 140%; background-color: #ffffff; color: #1e293b; } "
             css_bag_3 = "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; } "
-            # PEMBERSIHAN KETAT: Gunakan properti warna teks dasar yang putih polos dan tebal untuk TH
-            css_bag_4 = "th { color: #ffffff; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #014d7c; text-align: left; } "
-            css_bag_5 = "td { color: #1e293b; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff; } "
+            # PERBAIKAN: Menambahkan mso-line-height-rule: at-least untuk mengamankan jarak baris teks di dalam sel tabel Word
+            css_bag_4 = "th { color: #ffffff; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #014d7c; text-align: left; line-height: 140%; mso-line-height-rule: at-least; } "
+            css_bag_5 = "td { color: #1e293b; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff; line-height: 140%; mso-line-height-rule: at-least; } "
             css_bag_6 = "th, td { border-left: none; border-right: none; } "
 
             css_word_style = css_bag_1 + css_bag_2 + css_bag_3 + css_bag_4 + css_bag_5 + css_bag_6
             
             html_wrapped = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_style + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
             
-            # TRIK KHUSUS MS WORD: Menyuntikkan atribut 'bgcolor' murni ke dalam tag <th> agar warna latar biru langsung terkunci di Word
             konten_bersih = ai_response.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;">')
             
             html_wrapped = html_wrapped.replace("DOKUMEN_SEHE_AI_CONTENT", konten_bersih)
@@ -505,6 +505,7 @@ if final_prompt:
 
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
             st.rerun()
+
 
             
         else:
