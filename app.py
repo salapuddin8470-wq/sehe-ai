@@ -94,21 +94,28 @@ st.markdown("""
         background: transparent !important;
     }
     
-    /* KOTAK UNGGAH FILE KACA BENING (SOLUSI TOTAL ANTI TERTINDIH ARROW) */
+    /* KOTAK UNGGAH FILE KACA BENING TEDUH (ANTI PUTIH NEON) */
     [data-testid="stFileUploader"] {
-        background: rgba(255, 255, 255, 0.02) !important;
+        /* Mengubah latar belakang menjadi biru laut sangat gelap dan transparan */
+        background: rgba(1, 15, 30, 0.6) !important;
         backdrop-filter: blur(12px) !important;
-        border: 2px dashed rgba(3, 169, 244, 0.25) !important;
+        /* Mengubah warna garis putus-putus menjadi biru redup yang elegan */
+        border: 2px dashed rgba(3, 169, 244, 0.2) !important;
         padding: 24px !important;
         border-radius: 20px !important;
         margin-bottom: 25px;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        /* Memberikan efek bayangan dalam agar kotak terlihat tenggelam rapi */
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6) !important;
     }
+    
+    /* Efek menyala lembut HANYA saat kursor mouse menyentuh kotak */
     [data-testid="stFileUploader"]:hover {
-        border-color: #03a9f4 !important;
+        border-color: rgba(3, 169, 244, 0.6) !important;
         background: rgba(3, 169, 244, 0.04) !important;
-        box-shadow: 0 0 25px rgba(3, 169, 244, 0.2) !important;
+        box-shadow: 0 0 25px rgba(3, 169, 244, 0.15) !important;
     }
+
     
     /* MENGATUR ULANG TATA LETAK DROPZONE */
     [data-testid="stFileUploaderDropzone"] {
