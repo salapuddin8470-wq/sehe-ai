@@ -94,56 +94,45 @@ st.markdown("""
         background: transparent !important;
     }
     
-    /* KOTAK UNGGAH FILE KACA BENING TEDUH (ANTI PUTIH NEON) */
+    /* 1. KOTAK LUAR UNGGAH FILE (TRANSISI LUAR) */
     [data-testid="stFileUploader"] {
-        /* Mengubah latar belakang menjadi biru laut sangat gelap dan transparan */
-        background: rgba(1, 15, 30, 0.6) !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0px !important;
+        margin-bottom: 25px !important;
+    }
+    
+    /* 2. KOTAK DALAM DI DALAM GARIS PUTUS-PUTUS (PERBAIKAN TOTAL ANTI PUTIH NEON) */
+    [data-testid="stFileUploaderDropzone"], [data-testid="stFileUploader"] section {
+        /* Mengubah latar kotak dalam dari putih neon menjadi biru laut sangat gelap */
+        background: rgba(2, 14, 30, 0.75) !important;
         backdrop-filter: blur(12px) !important;
-        /* Mengubah warna garis putus-putus menjadi biru redup yang elegan */
-        border: 2px dashed rgba(3, 169, 244, 0.2) !important;
-        padding: 24px !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        /* Mewarnai ulang garis putus-putus pembatas kotak */
+        border: 2px dashed rgba(3, 169, 244, 0.25) !important;
         border-radius: 20px !important;
-        margin-bottom: 25px;
+        padding: 24px !important;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        /* Memberikan efek bayangan dalam agar kotak terlihat tenggelam rapi */
         box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6) !important;
     }
     
-    /* Efek menyala lembut HANYA saat kursor mouse menyentuh kotak */
-    [data-testid="stFileUploader"]:hover {
+    /* Efek menyala redup yang mewah saat kursor menyentuh kotak dalam */
+    [data-testid="stFileUploaderDropzone"]:hover, [data-testid="stFileUploader"] section:hover {
         border-color: rgba(3, 169, 244, 0.6) !important;
-        background: rgba(3, 169, 244, 0.04) !important;
-        box-shadow: 0 0 25px rgba(3, 169, 244, 0.15) !important;
-    }
-
-    
-    /* MENGATUR ULANG TATA LETAK DROPZONE */
-    [data-testid="stFileUploaderDropzone"] {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 16px !important; /* Memberikan jarak horizontal antara ikon arrow dan teks */
-        padding: 10px !important;
+        background: rgba(3, 169, 244, 0.05) !important;
+        box-shadow: 0 0 25px rgba(3, 169, 244, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.4) !important;
     }
     
-    /* MENGUNCI UKURAN DAN JARAK AMAN IKON ARROW (PANAH) */
-    [data-testid="stFileUploaderDropzone"] svg {
-        min-width: 24px !important;
-        min-height: 24px !important;
-        margin-right: 8px !important; /* Dorong teks di sebelah kanan agar menjauh dari panah */
-        flex-shrink: 0 !important; /* Mencegah ikon menyusut saat font teks membesar */
-    }
-    
-    /* MENGGESER DAN MERAPIKAN TEKS AGAR BEBAS TERTINDIH */
+    /* Mengamankan seluruh teks instruksi di dalam kotak agar menyala putih bersih */
     [data-testid="stFileUploaderDropzone"] div,
     [data-testid="stFileUploader"] section div, 
     [data-testid="stFileUploader"] text, 
     [data-testid="stFileUploader"] span {
         color: #ffffff !important; 
         font-weight: 500 !important;
-        line-height: 1.4 !important;
-        text-align: left !important;
+        line-height: 1.5 !important;
     }
+
     
     /* Memisahkan tombol "Browse files" ke baris bawah agar tidak menumpuk */
     [data-testid="stFileUploader"] button {
