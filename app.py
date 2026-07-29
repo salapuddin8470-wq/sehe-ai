@@ -133,15 +133,20 @@ st.markdown("""
         line-height: 1.5 !important;
     }
 
+ /* Menyembunyikan teks info ukuran file bawaan Streamlit (200MB per file) */
+    [data-testid="stFileUploaderRequirements"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+    }
+
     
     /* Memisahkan tombol "Browse files" ke baris bawah agar tidak menumpuk */
     [data-testid="stFileUploader"] button {
         margin-top: 4px !important;
     }
 
-
-
-    
+       
     /* TOMBOL CETAK & SIMPAN GRADASI BERKILAU */
     .action-buttons-container { display: flex; gap: 16px; margin-top: 20px; margin-bottom: 12px; }
     .btn-action {
