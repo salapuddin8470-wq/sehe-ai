@@ -94,7 +94,7 @@ st.markdown("""
         background: transparent !important;
     }
     
-    /* KOTAK UNGGAH FILE KACA BENING (PERBAIKAN TOTAL TERTINDIH) */
+    /* KOTAK UNGGAH FILE KACA BENING (SOLUSI TOTAL ANTI TERTINDIH) */
     [data-testid="stFileUploader"] {
         background: rgba(255, 255, 255, 0.02) !important;
         backdrop-filter: blur(12px) !important;
@@ -109,16 +109,39 @@ st.markdown("""
         background: rgba(3, 169, 244, 0.04) !important;
         box-shadow: 0 0 25px rgba(3, 169, 244, 0.2) !important;
     }
-    /* Mengunci jarak aman teks petunjuk agar sejajar rapi */
-    [data-testid="stFileUploader"] section div, [data-testid="stFileUploader"] text, [data-testid="stFileUploader"] span {
+    
+    /* TRIK UTAMA: Memaksa tata letak internal upload agar berbaris ke bawah (vertikal) */
+    [data-testid="stFileUploader"] section {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 12px !important;
+    }
+    
+    /* Memberikan ruang khusus untuk ikon SVG agar menjauh dan tidak ditabrak teks */
+    [data-testid="stFileUploader"] svg {
+        margin-bottom: 8px !important;
+        min-width: 32px !important;
+        min-height: 32px !important;
+    }
+    
+    /* Mengunci teks petunjuk upload agar rapi di tengah dan memiliki ruang napas */
+    [data-testid="stFileUploader"] section div, 
+    [data-testid="stFileUploader"] text, 
+    [data-testid="stFileUploader"] span {
         color: #ffffff !important; 
         font-weight: 500 !important;
         line-height: 1.6 !important;
+        text-align: center !important;
     }
-    /* Memaksa tombol "Browse files" turun dan terpisah dari ikon */
+    
+    /* Memisahkan tombol "Browse files" ke baris paling bawah secara tegas */
     [data-testid="stFileUploader"] button {
-        margin-top: 12px !important;
+        margin-top: 8px !important;
+        display: inline-block !important;
     }
+
 
     
     /* TOMBOL CETAK & SIMPAN GRADASI BERKILAU */
