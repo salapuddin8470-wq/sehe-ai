@@ -294,8 +294,8 @@ for i, message in enumerate(st.session_state.messages):
     with st.chat_message(message["role"], avatar=avatar_icon):
         st.markdown(message["content"], unsafe_allow_html=True)
         
-         # PENGGABUNGAN BLOK LOGIKA ASISTEN: Mencegah NameError & Sinkronisasi Tombol Unduh
-         if message["role"] == "assistant":
+        # PENGGABUNGAN BLOK LOGIKA ASISTEN: Mencegah NameError & Sinkronisasi Tombol Unduh
+        if message["role"] == "assistant":
             # CSS TERPADU: Disamakan persis dengan gaya dokumen HTML & Word Premium
             css_word_hist = (
                 "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
