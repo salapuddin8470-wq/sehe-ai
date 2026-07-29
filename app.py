@@ -294,8 +294,8 @@ for i, message in enumerate(st.session_state.messages):
     with st.chat_message(message["role"], avatar=avatar_icon):
         st.markdown(message["content"], unsafe_allow_html=True)
         
+        # PENGGABUNGAN BLOK LOGIKA ASISTEN: Mencegah NameError & Sinkronisasi Tombol Unduh
         if message["role"] == "assistant":
-            # Proteksi desimal menggunakan titik (.), bukan koma (,)
             css_word_hist = (
                 "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
                 "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; } "
@@ -318,23 +318,19 @@ for i, message in enumerate(st.session_state.messages):
             html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", message["content"])
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
             
-        if message["role"] == "assistant":
-            # Pastikan jarak spasi di depan variabel ini sama persis
             html_tombol = """
             <div class="action-buttons-container">
-                <a class="btn-action btn-blue" href="data:application/msword;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.doc">
+                <a class="btn-action btn-blue" href="data:application/msword;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX.doc">
                     📝 Simpan .WORD
                 </a>
-                <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.html">
+                <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX.html">
                     💾 Simpan .HTML
                 </a>
             </div>
             """
-            # PERBAIKAN: Menggunakan b64_html_hist dan INDEX (bukan INDEX_BARU) agar sinkron dengan Bagian 7
-            html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html_hist).replace("INDEX_BARU", str(i))
-           
-            # Baris ini juga harus sejajar lurus di bawahnya
+            html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html_hist).replace("INDEX", str(i))
             st.markdown(html_tombol, unsafe_allow_html=True)
+
 
 # =====================================================================
 # 8. AREA FITUR BARU: PERINTAH CEPAT (3 NAVIGASI MARITIM MEWAH BENING)
@@ -342,7 +338,6 @@ for i, message in enumerate(st.session_state.messages):
 st.write("### 🎯 Rekomendasi Pintasan Cepat")
 cp1, cp2, cp3 = st.columns(3)
 
-# Menggunakan session_state agar nilai tidak hilang saat halaman rerun otomatis
 if "prompt_pilihan" not in st.session_state:
     st.session_state.prompt_pilihan = None
 
@@ -356,22 +351,16 @@ with cp3:
     if st.button("🌙 Cek Fase Bulan Terkini", use_container_width=True):
         st.session_state.prompt_pilihan = "Bagaimana kondisi fase bulan hari ini secara real-time? Berikan analisis dampaknya terhadap pergerakan kuat-lemah arus air laut dan kelimpahan tangkapan ikan nelayan malam ini."
 
-# AREA HUBUNGAN FILE DATA PENDUKUNG MENGGUNAKAN EXPANDER LIPAT YANG RAPI
 with st.expander("📂 Lampirkan Dokumen Basis Data Rujukan (.PDF / .DOCX)", expanded=False):
     st.write("Silakan unggah dokumen rujukan di bawah ini sebagai acuan analisis SeHe.AI:")
     file_pendukung = st.file_uploader("Pilih file dari HP/Drive Anda (Maks 10MB):", type=["pdf", "docx"], label_visibility="collapsed")
 
-# Logika penentuan prompt akhir dari chat input atau tombol pintasan cepat
 prompt_input = st.chat_input("Tanya sesuatu ke SeHe.AI...")
-
-# Ambil input, utamakan chat_input, jika kosong ambil dari tombol pintasan
 final_prompt = prompt_input if prompt_input else st.session_state.prompt_pilihan
 
 if final_prompt:
-    # Reset prompt_pilihan setelah digunakan agar tidak memicu perulangan
     st.session_state.prompt_pilihan = None
     
-    # Proteksi Ukuran File Terlebih Dahulu Sebelum Memulai Pengiriman (Batas 10MB)
     file_valid = True
     if file_pendukung is not None:
         ukuran_file_mb = file_pendukung.size / (1024 * 1024)
@@ -388,7 +377,6 @@ if final_prompt:
         last_error_msg = ""
         paket_konten = []
         
-        # Proses pembacaan dokumen rujukan lokal (Upload HP/Drive)
         if file_pendukung is not None:
             nama_file = file_pendukung.name.lower()
             if nama_file.endswith('.docx'):
@@ -410,33 +398,26 @@ if final_prompt:
                 except Exception as e:
                     st.warning(f"Gagal memproses file PDF: {e}")
 
-        # Jalankan pemindaian otomatis ke Drive latar belakang via kata kunci pipa (|)
         teks_tanya = str(final_prompt)
         referensi_lokal = baca_data_bantuan_drive(teks_tanya)
         if referensi_lokal:
             paket_konten.append(f"{referensi_lokal}\n\n")
             
-        # Gabungkan teks pertanyaan utama pengguna ke paket pengiriman
         paket_konten.append(teks_tanya)
 
-        # =====================================================================
-        # OPTIMALISASI KETAT: Bersihkan Dokumen Duplikat Jika Ini Pesan Lanjutan
-        # =====================================================================
-        # Jika riwayat sudah ada, jangan kirim ulang dokumen besar agar kuota API hemat 90%
         if len(st.session_state.messages) > 1:
             paket_konten = [teks_tanya]
 
-        # Perulangan otomatis mencoba API Key dan cadangan model jika server sibuk
+        # PERBAIKAN LOGIKA FAILOVER API: Menjamin kunci cadangan berjalan berurutan
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
-            daftar_model = ['gemini-3.5-flash', 'gemini-3.6-flash']
+            daftar_model = ['gemini-2.5-flash', 'gemini-2.5-pro']  # Nama model produksi stabil Google GenAI SDK
             
             for target_model in daftar_model:
                 try:
                     with st.spinner(f"SeHe.AI membedah data ({target_model} | Jalur {idx+1}/{len(api_keys)})..."):
                         temp_client = genai.Client(api_key=current_key)
                         
-                        # FORMAT RIWAYAT: Pastikan sejajar lurus dengan baris temp_client di atasnya
                         riwayat_gemini = []
                         for msg in st.session_state.messages[-3:-1]:
                             riwayat_gemini.append(
@@ -446,53 +427,45 @@ if final_prompt:
                                 )
                             )
 
-                        # AKTIFKAN MODE CHAT BERKELANJUTAN: Buat sesi chat dengan membawa memori riwayat di atas
                         chat_session = temp_client.chats.create(
                             model=target_model,
                             config=ai_config,
                             history=riwayat_gemini
                         )
                         
-                        # Kirim paket konten terbaru (pesan baru) ke sesi chat
                         response = chat_session.send_message(message=paket_konten)
-                        
                         if response and hasattr(response, 'text'):
                             ai_response = response.text
                             sukses_merespons = True
-                            break # Sukses, keluar dari loop model
+                            break 
                 except Exception as e:
                     last_error_msg = str(e)
-                    
-                    # LOGIKA OPTIMAL: Jika terkena kuota habis / batas detik harian
                     if "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
                         import time
                         time.sleep(2)
-                        break  # Keluar dari loop model saat ini, lanjut ke API Key berikutnya
-                    
+                        break 
                     elif "503" in last_error_msg:
                         continue  
-                    
                     else:
                         break
 
-            # Keluar dari loop API Key utama jika salah satu kunci sukses mendapatkan jawaban
             if sukses_merespons:
                 break 
             
-            # Jika sudah berada di ujung kunci terakhir dan semua jalur tetap gagal total
+            # Jika berada di ujung kunci terakhir dan seluruhnya gagal total
             if idx == len(api_keys) - 1 and not sukses_merespons:
                 st.error("⚠️ Seluruh jalur kunci dan model cadangan SeHe.AI sedang padat di server Google. Silakan tunggu 10 detik lalu kirim ulang pesan Anda.")
                 ai_response = None
 
-
-            else:
-                ai_response = f"Terjadi kesalahan sistem: {last_error_msg}. Pastikan internet Anda aktif."
-                break
-
-        # Tampilkan jawaban akhir di layar web dengan avatar ikan
+        # PERBAIKAN UJUNG KODE: Menampilkan jawaban dan menyimpannya secara permanen ke Riwayat Obrolan
         if ai_response is not None:
             with st.chat_message("assistant", avatar="🐟"):
                 st.markdown(ai_response, unsafe_allow_html=True)
+            
+            # Daftarkan pesan asisten ke memori agar tombol unduh ikut muncul saat halaman disegarkan
+            st.session_state.messages.append({"role": "assistant", "content": ai_response})
+            st.rerun()
+
                 
                 # =============================================================
                 # SOLUSI TOTAL KEBAL SYNTAXERROR: ENKAPSULASI TEKS HORIZONTAL
