@@ -430,9 +430,14 @@ with cp3:
     if st.button("🌙 Cek Fase Bulan Terkini", use_container_width=True):
         st.session_state.prompt_pilihan = "Bagaimana kondisi fase bulan hari ini secara real-time? Berikan analisis dampaknya terhadap pergerakan kuat-lemah arus air laut dan kelimpahan tangkapan ikan nelayan malam ini."
 
-with st.expander("📂 Lampirkan Dokumen Basis Data Rujukan (.PDF / .DOCX)", expanded=False):
-    st.write("Silakan unggah dokumen rujukan di bawah ini sebagai acuan analisis SeHe.AI:")
-    file_pendukung = st.file_uploader("Pilih file dari HP/Drive Anda (Maks 10MB):", type=["pdf", "docx"], label_visibility="collapsed")
+# KODE BARU: Kotak unggah file langsung terbuka lebar di layar tanpa dilipat
+st.write("### 📂 Lampirkan Dokumen Basis Data Rujukan (.PDF / .DOCX)")
+file_pendukung = st.file_uploader(
+    "Silakan unggah dokumen rujukan sebagai acuan analisis SeHe.AI (Maks 10MB):", 
+    type=["pdf", "docx"], 
+    label_visibility="visible"
+)
+st.write("") # Memberi sedikit ruang napas di bawahnya
 
 prompt_input = st.chat_input("Tanya sesuatu ke SeHe.AI...")
 final_prompt = prompt_input if prompt_input else st.session_state.prompt_pilihan
