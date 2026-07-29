@@ -316,12 +316,22 @@ for i, message in enumerate(st.session_state.messages):
                 "</html>"
             )
             
-            # PEMBERSIHAN TOTAL: Memotong spasi liar & menyamakan inline style atribut Word dan HTML Browser
+            # STERILISASI SEHE.AI: Mengunci pemotongan langsung pada awal tag tabel utama
             konten_bersih_hist = message["content"].strip()
+            
+            # Deteksi posisi tabel utama untuk memotong tag kosong buatan AI di atasnya
+            posisi_tabel_hist = konten_bersih_hist.find("<table")
+            if posisi_tabel_hist != -1:
+                konten_bersih_hist = konten_bersih_hist[posisi_tabel_hist:]
+            
+            # Hapus paksa jika ada tag kaku markdown yang merusak visual HTML
+            konten_bersih_hist = konten_bersih_hist.replace("```html", "").replace("```", "").strip()
+            
+            # Terapkan gaya desain terpadu konsisten
             konten_bersih_hist = konten_bersih_hist.replace("<table", '<table style="margin-top: 0px; border-collapse: collapse; width: 100%; background-color: #ffffff;"')
             konten_bersih_hist = konten_bersih_hist.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff; font-weight: bold; padding: 12px 14px; text-align: left;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff; font-weight: bold; padding: 12px 14px; text-align: left;">')
             konten_bersih_hist = konten_bersih_hist.replace("<td", '<td style="color: #1e293b; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff;"')
-            
+
             html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", konten_bersih_hist)
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
             
@@ -486,12 +496,22 @@ if final_prompt:
             
             html_wrapped = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_style + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
             
-            # PEMBERSIHAN & PENYELARASAN GAYA INLINE UTAMA: browser & MS word kini dipaksa membaca kode warna yang sama
+            # STERILISASI SEHE.AI: Mengunci pemotongan langsung pada awal tag tabel utama
             konten_bersih = ai_response.strip()
+            
+            # Deteksi posisi tabel utama untuk memotong tag kosong buatan AI di atasnya
+            posisi_tabel = konten_bersih.find("<table")
+            if posisi_tabel != -1:
+                konten_bersih = konten_bersih[posisi_tabel:]
+                
+            # Hapus paksa jika ada tag kaku markdown yang merusak visual HTML
+            konten_bersih = konten_bersih.replace("```html", "").replace("```", "").strip()
+            
+            # Terapkan gaya desain terpadu konsisten
             konten_bersih = konten_bersih.replace("<table", '<table style="margin-top: 0px; border-collapse: collapse; width: 100%; background-color: #ffffff;"')
             konten_bersih = konten_bersih.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff; font-weight: bold; padding: 12px 14px; text-align: left;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff; font-weight: bold; padding: 12px 14px; text-align: left;">')
             konten_bersih = konten_bersih.replace("<td", '<td style="color: #1e293b; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff;"')
-            
+
             html_wrapped = html_wrapped.replace("DOKUMEN_SEHE_AI_CONTENT", konten_bersih)
             b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
             new_idx = len(st.session_state.messages)
