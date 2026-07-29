@@ -307,16 +307,20 @@ ai_config = types.GenerateContentConfig(
         "PENTING 2: Jika pengguna meminta tabel, laporan, kurikulum, proposal, RPP, atau draf administrasi, "
         "Anda WAJIB menampilkannya secara UTUH, PANJANG, DAN DETAIL dalam bentuk dokumen HTML murni dengan inline CSS yang elegan (TANPA tag markdown ```html). "
         "IKUTI ATURAN WAJIB DESAIN DOKUMEN MEWAH & PROFESIONAL BERIKUT: "
-        "- TAMPILAN MONOKROMATIK PREMIUM & MINIMALIS KONTEMPORER. DILARANG KERAS MENGGUNAKAN GAYA ZEBRA STRIPING ATAU BARIS SELANG-SELING. Latar belakang baris data harus bersih polos transparan. "
-        "- WARNA TEMA OTOMATIS: Pilih satu warna tema solid yang mewah berdasarkan topik dokumen (Contoh: Deep Oceanic Blue #014d7c untuk kelautan/perikanan/cuaca, Emerald Green #0d5c3a untuk pendidikan/sekolah, Charcoal Gray #2d3748 untuk keuangan/anggaran biaya). "
-        "- Gunakan warna tema otomatis pilihan Anda tersebut untuk latar belakang Kepala Tabel (th) dengan teks putih tebal (color: #ffffff !important; font-weight: 600; padding: 12px 14px; text-align: left; letter-spacing: 0.5px;). "
-        "- Desain Garis Pembatas Sleek: Hilangkan seluruh garis vertikal kaku. Hanya gunakan garis horizontal bawah yang tipis gelap transparan di setiap baris data (border-bottom: 1px solid #e2e8f0;). "
+        "- STRUKTUR KOP DOKUMEN FORMAL: Setiap dokumen draf/laporan wajib diawali dengan Kop Dokumen resmi di bagian paling atas: "
+        "  Teks tebal nama instansi di tengah (font-size: 18px; text-align: center;), diikuti alamat sub-teks kecil, "
+        "  dan ditutup dengan garis pembatas hitam tebal horizontal ganda (<hr style='border: 0; border-top: 4px double #1e293b; margin: 15px 0;'>). "
+        "- TAMPILAN MONOKROMATIK PREMIUM & MINIMALIS KONTEMPORER: DILARANG KERAS MENGGUNAKAN GAYA ZEBRA STRIPING ATAU BARIS SELANG-SELING. Latar belakang baris data harus bersih polos transparan/putih. "
+        "- WARNA TEMA UTOMATIS: Gunakan warna solid mewah Deep Oceanic Blue #014d7c untuk kelautan/perikanan/cuaca, Emerald Green #0d5c3a untuk pendidikan/sekolah, atau Charcoal Gray #2d3748 untuk keuangan/anggaran biaya. "
+        "- Gunakan warna tema pilihan tersebut untuk latar belakang Kepala Tabel (th) dengan teks putih tebal (color: #ffffff !important; font-weight: 600; padding: 12px 14px; text-align: left;). "
+        "- Desain Garis Pembatas Sleek: Hilangkan seluruh garis vertikal kaku pada tabel. Hanya gunakan garis horizontal bawah yang tipis gelap transparan di setiap baris data (border-bottom: 1px solid #e2e8f0;). "
         "- Padding Sel Harus Lega (padding: 12px 14px;) agar teks seimbang, mewah, memiliki ruang napas tinggi, dan mudah dianalisis. "
         "- KONTRAST TEKS DOKUMEN: Seluruh huruf isi konten, paragraf, dan isi data tabel wajib menggunakan warna gelap arang profesional (color: #1e293b !important;) agar terbaca sempurna di kertas putih saat dibuka di Word atau PDF, dengan pengecualian teks di dalam Kepala Tabel (th) yang tetap putih."
     ),
     temperature=0.3,
     tools=[{"google_search": {}}]
 )
+
 
 # =====================================================================
 # 5. SINKRONISASI OTOMATIS FOLDER GOOGLE DRIVE KHUSUS SEHE.AI
