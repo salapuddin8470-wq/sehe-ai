@@ -458,55 +458,48 @@ if final_prompt:
                 ai_response = None
 
         # T TAMPILKAN JAWABAN AKHIR DI LAYAR WEB
+                # TAMPILKAN JAWABAN AKHIR DI LAYAR WEB
         if ai_response is not None:
             with st.chat_message("assistant", avatar="🐟"):
                 st.markdown(ai_response, unsafe_allow_html=True)
+                
+            # =============================================================
+            # SOLUSI TOTAL KEBAL SYNTAXERROR: ENKAPSULASI TEKS HORIZONTAL
+            # =============================================================
+            # SEMUA BARIS DI BAWAH INI SEJAJAR (MENGGUNAKAN 12 SPASI)
+            css_bag_1 = "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
+            css_bag_2 = "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; } "
+            css_bag_3 = "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; } "
+            css_bag_4 = "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; text-align: left; } "
+            css_bag_5 = "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #cccccc; background-color: #ffffff; } "
+            css_bag_6 = "tr td:first-child { font-weight: bold; color: #0f172a !important; } th, td { border-left: none !important; border-right: none !important; } "
+
+            css_word_style = css_bag_1 + css_bag_2 + css_bag_3 + css_bag_4 + css_bag_5 + css_bag_6
             
-            # Daftarkan pesan ke memori & segarkan layar
+            html_wrapped = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_style + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
+            
+            html_wrapped = html_wrapped.replace("DOKUMEN_SEHE_AI_CONTENT", ai_response)
+            b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
+            new_idx = len(st.session_state.messages)
+            
+            html_tombol = """
+            <div class="action-buttons-container">
+                <a class="btn-action btn-blue" href="data:application/msword;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.doc">
+                    📝 Simpan .WORD
+                </a>
+                <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.html">
+                    💾 Simpan .HTML
+                </a>
+            </div>
+            """
+
+            html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
+            st.markdown(html_tombol, unsafe_allow_html=True)
+
+            # SIMPAN KE RIWAYAT PERCAKAPAN
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
             st.rerun()
-               
-                # =============================================================
-                # SOLUSI TOTAL KEBAL SYNTAXERROR: ENKAPSULASI TEKS HORIZONTAL
-                # =============================================================
-                css_bag_1 = "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
-                css_bag_2 = "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 1.6; background-color: #ffffff !important; color: #1e293b !important; } "
-                css_bag_3 = "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; } "
-                css_bag_4 = "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; text-align: left; } "
-                # Menghapus mso-line-height-rule kaku dan mengganti border dengan warna abu solid standar Word
-                css_bag_5 = "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #cccccc; background-color: #ffffff; } "
-                css_bag_6 = "tr td:first-child { font-weight: bold; color: #0f172a !important; } th, td { border-left: none !important; border-right: none !important; } "
-
-                
-                css_word_style = css_bag_1 + css_bag_2 + css_bag_3 + css_bag_4 + css_bag_5 + css_bag_6
-                
-                # Gabungkan struktur HTML Word secara bersih tanpa merusak pembaca Python
-                html_wrapped = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_style + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
-                
-                html_wrapped = html_wrapped.replace("DOKUMEN_SEHE_AI_CONTENT", ai_response)
-                b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
-                new_idx = len(st.session_state.messages)
-                
-                # Tampilkan Dua Tombol Berjejer Estetis Kontras Tinggi (Simpan Word & Simpan HTML)
-                html_tombol = """
-                <div class="action-buttons-container">
-                    <a class="btn-action btn-blue" href="data:application/msword;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.doc">
-                        📝 Simpan .WORD
-                    </a>
-                    <a class="btn-action btn-green" href="data:text/html;base64,B64_DATA_DOKUMEN" download="Dokumen_SeHe_AI_INDEX_BARU.html">
-                        💾 Simpan .HTML
-                    </a>
-                </div>
-                """
-
-                # Lakukan proses replace seperti biasa
-                html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html).replace("INDEX_BARU", str(new_idx))
-                
-                # Kirim langsung menggunakan st.markdown agar tampilan tombol rapi dan presisi
-                st.markdown(html_tombol, unsafe_allow_html=True)
-
-             
-            st.session_state.messages.append({"role": "assistant", "content": ai_response})
+            
         else:
             if "429" not in last_error_msg and "RESOURCE_EXHAUSTED" not in last_error_msg:
                 st.error(f"Gagal mendapatkan respons dari server Google AI Studio. Detail: {last_error_msg}")
