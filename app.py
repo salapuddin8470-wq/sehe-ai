@@ -316,9 +316,12 @@ for i, message in enumerate(st.session_state.messages):
             )
             
             # Tambahkan baris replace ini tepat sebelum fungsi base64 di Bagian #7 Anda!
-            html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", message["content"])
-            html_wrapped_hist = html_wrapped_hist.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;">')
+            konten_bersih_hist = message["content"].strip()
+            konten_bersih_hist = konten_bersih_hist.replace("<table", '<table style="margin-top: 0px;"')
+            konten_bersih_hist = konten_bersih_hist.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;">')
             
+            html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", konten_bersih_hist)
+
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
 
             
@@ -483,9 +486,17 @@ if final_prompt:
             
             html_wrapped = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_style + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
             
-            konten_bersih = ai_response.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;">')
+            # PERBAIKAN TOTAL: Menghilangkan spasi/baris baru liar sebelum tabel dan menyuntikkan bgcolor murni
+            konten_bersih = ai_response.strip() # Menghapus spasi & enter liar di awal/akhir respons AI
+            
+            # Amankan penataan tag table agar menempel rapi tanpa margin atas berlebih di Word
+            konten_bersih = konten_bersih.replace("<table", '<table style="margin-top: 0px;"')
+            
+            # Suntikkan warna latar kepala tabel universal untuk MS Word
+            konten_bersih = konten_bersih.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;">')
             
             html_wrapped = html_wrapped.replace("DOKUMEN_SEHE_AI_CONTENT", konten_bersih)
+
             b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
             new_idx = len(st.session_state.messages)
             
