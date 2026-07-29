@@ -295,14 +295,15 @@ for i, message in enumerate(st.session_state.messages):
         st.markdown(message["content"], unsafe_allow_html=True)
         
         # PENGGABUNGAN BLOK LOGIKA ASISTEN: Mencegah NameError & Sinkronisasi Tombol Unduh
-        if message["role"] == "assistant":
+                if message["role"] == "assistant":
+            # CSS TERPADU: Disamakan persis dengan gaya dokumen HTML & Word Premium
             css_word_hist = (
                 "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
-                "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 140%; background-color: #ffffff !important; color: #1e293b !important; } "
-                "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; } "
-                "th { color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #000000; } "
-                "td { color: #334155 !important; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; mso-line-height-rule: exactly; } "
-                "th, td { border-left: none !important; border-right: none !important; }"
+                "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 140%; background-color: #ffffff; color: #1e293b; } "
+                "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; margin-top: 0px; } "
+                "th { background-color: #014d7c; color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #003353; text-align: left; line-height: 140%; mso-line-height-rule: at-least; } "
+                "td { color: #1e293b; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff; line-height: 140%; mso-line-height-rule: at-least; } "
+                "th, td { border-left: none !important; border-right: none !important; } "
             )
             
             html_wrapped_hist = (
@@ -315,15 +316,14 @@ for i, message in enumerate(st.session_state.messages):
                 "</html>"
             )
             
-            # Tambahkan baris replace ini tepat sebelum fungsi base64 di Bagian #7 Anda!
+            # PEMBERSIHAN TOTAL: Memotong spasi liar & menyamakan inline style atribut Word dan HTML Browser
             konten_bersih_hist = message["content"].strip()
-            konten_bersih_hist = konten_bersih_hist.replace("<table", '<table style="margin-top: 0px;"')
-            konten_bersih_hist = konten_bersih_hist.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;">')
+            konten_bersih_hist = konten_bersih_hist.replace("<table", '<table style="margin-top: 0px; border-collapse: collapse; width: 100%; background-color: #ffffff;"')
+            konten_bersih_hist = konten_bersih_hist.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff; font-weight: bold; padding: 12px 14px; text-align: left;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff; font-weight: bold; padding: 12px 14px; text-align: left;">')
+            konten_bersih_hist = konten_bersih_hist.replace("<td", '<td style="color: #1e293b; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff;"')
             
             html_wrapped_hist = html_wrapped_hist.replace("DOKUMEN_SEHE_AI_CONTENT", konten_bersih_hist)
-
             b64_html_hist = base64.b64encode(html_wrapped_hist.encode('utf-8')).decode('utf-8')
-
             
             html_tombol = """
             <div class="action-buttons-container">
@@ -337,6 +337,7 @@ for i, message in enumerate(st.session_state.messages):
             """
             html_tombol = html_tombol.replace("B64_DATA_DOKUMEN", b64_html_hist).replace("INDEX", str(i))
             st.markdown(html_tombol, unsafe_allow_html=True)
+
 
 
 # =====================================================================
@@ -466,6 +467,7 @@ if final_prompt:
 
         # T TAMPILKAN JAWABAN AKHIR DI LAYAR WEB
                 # TAMPILKAN JAWABAN AKHIR DI LAYAR WEB
+                # TAMPILKAN JAWABAN AKHIR DI LAYAR WEB
         if ai_response is not None:
             with st.chat_message("assistant", avatar="🐟"):
                 st.markdown(ai_response, unsafe_allow_html=True)
@@ -474,11 +476,9 @@ if final_prompt:
             # SOLUSI TOTAL KEBAL SYNTAXERROR: ENKAPSULASI TEKS HORIZONTAL
             # =============================================================
             css_bag_1 = "@page { size: 21cm 29.7cm; margin: 2.54cm 2.54cm 2.54cm 2.54cm; mso-page-orientation: portrait; } "
-            # PERBAIKAN: Mengganti line-height menjadi 140% agar dikenali Word dengan benar dan tulisan tidak bertumpuk
             css_bag_2 = "body { font-family: 'Segoe UI', Arial, sans-serif; padding: 0px; line-height: 140%; background-color: #ffffff; color: #1e293b; } "
-            css_bag_3 = "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; } "
-            # PERBAIKAN: Menambahkan mso-line-height-rule: at-least untuk mengamankan jarak baris teks di dalam sel tabel Word
-            css_bag_4 = "th { color: #ffffff; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #014d7c; text-align: left; line-height: 140%; mso-line-height-rule: at-least; } "
+            css_bag_3 = "table { border-collapse: collapse; width: 100%; margin: 20px 0; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; margin-top: 0px; } "
+            css_bag_4 = "th { background-color: #014d7c; color: #ffffff !important; font-weight: bold; padding: 12px 14px; border-bottom: 2px solid #003353; text-align: left; line-height: 140%; mso-line-height-rule: at-least; } "
             css_bag_5 = "td { color: #1e293b; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff; line-height: 140%; mso-line-height-rule: at-least; } "
             css_bag_6 = "th, td { border-left: none; border-right: none; } "
 
@@ -486,17 +486,13 @@ if final_prompt:
             
             html_wrapped = """<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://w3.org'><head><meta charset='utf-8'><title>Dokumen SeHe AI</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><style>""" + css_word_style + """</style></head><body>DOKUMEN_SEHE_AI_CONTENT</body></html>"""
             
-            # PERBAIKAN TOTAL: Menghilangkan spasi/baris baru liar sebelum tabel dan menyuntikkan bgcolor murni
-            konten_bersih = ai_response.strip() # Menghapus spasi & enter liar di awal/akhir respons AI
-            
-            # Amankan penataan tag table agar menempel rapi tanpa margin atas berlebih di Word
-            konten_bersih = konten_bersih.replace("<table", '<table style="margin-top: 0px;"')
-            
-            # Suntikkan warna latar kepala tabel universal untuk MS Word
-            konten_bersih = konten_bersih.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff;">')
+            # PEMBERSIHAN & PENYELARASAN GAYA INLINE UTAMA: browser & MS word kini dipaksa membaca kode warna yang sama
+            konten_bersih = ai_response.strip()
+            konten_bersih = konten_bersih.replace("<table", '<table style="margin-top: 0px; border-collapse: collapse; width: 100%; background-color: #ffffff;"')
+            konten_bersih = konten_bersih.replace("<th", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff; font-weight: bold; padding: 12px 14px; text-align: left;"').replace("<th>", '<th bgcolor="#014d7c" style="background-color: #014d7c; color: #ffffff; font-weight: bold; padding: 12px 14px; text-align: left;">')
+            konten_bersih = konten_bersih.replace("<td", '<td style="color: #1e293b; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; background-color: #ffffff;"')
             
             html_wrapped = html_wrapped.replace("DOKUMEN_SEHE_AI_CONTENT", konten_bersih)
-
             b64_html = base64.b64encode(html_wrapped.encode('utf-8')).decode('utf-8')
             new_idx = len(st.session_state.messages)
             
@@ -516,6 +512,7 @@ if final_prompt:
 
             st.session_state.messages.append({"role": "assistant", "content": ai_response})
             st.rerun()
+
 
 
             
