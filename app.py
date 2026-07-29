@@ -94,7 +94,7 @@ st.markdown("""
         background: transparent !important;
     }
     
-    /* KOTAK UNGGAH FILE KACA BENING (SOLUSI TOTAL ANTI TERTINDIH) */
+    /* KOTAK UNGGAH FILE KACA BENING (SOLUSI TOTAL ANTI TERTINDIH ARROW) */
     [data-testid="stFileUploader"] {
         background: rgba(255, 255, 255, 0.02) !important;
         backdrop-filter: blur(12px) !important;
@@ -110,37 +110,39 @@ st.markdown("""
         box-shadow: 0 0 25px rgba(3, 169, 244, 0.2) !important;
     }
     
-    /* TRIK UTAMA: Memaksa tata letak internal upload agar berbaris ke bawah (vertikal) */
-    [data-testid="stFileUploader"] section {
+    /* MENGATUR ULANG TATA LETAK DROPZONE */
+    [data-testid="stFileUploaderDropzone"] {
         display: flex !important;
-        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 12px !important;
+        gap: 16px !important; /* Memberikan jarak horizontal antara ikon arrow dan teks */
+        padding: 10px !important;
     }
     
-    /* Memberikan ruang khusus untuk ikon SVG agar menjauh dan tidak ditabrak teks */
-    [data-testid="stFileUploader"] svg {
-        margin-bottom: 8px !important;
-        min-width: 32px !important;
-        min-height: 32px !important;
+    /* MENGUNCI UKURAN DAN JARAK AMAN IKON ARROW (PANAH) */
+    [data-testid="stFileUploaderDropzone"] svg {
+        min-width: 24px !important;
+        min-height: 24px !important;
+        margin-right: 8px !important; /* Dorong teks di sebelah kanan agar menjauh dari panah */
+        flex-shrink: 0 !important; /* Mencegah ikon menyusut saat font teks membesar */
     }
     
-    /* Mengunci teks petunjuk upload agar rapi di tengah dan memiliki ruang napas */
+    /* MENGGESER DAN MERAPIKAN TEKS AGAR BEBAS TERTINDIH */
+    [data-testid="stFileUploaderDropzone"] div,
     [data-testid="stFileUploader"] section div, 
     [data-testid="stFileUploader"] text, 
     [data-testid="stFileUploader"] span {
         color: #ffffff !important; 
         font-weight: 500 !important;
-        line-height: 1.6 !important;
-        text-align: center !important;
+        line-height: 1.4 !important;
+        text-align: left !important;
     }
     
-    /* Memisahkan tombol "Browse files" ke baris paling bawah secara tegas */
+    /* Memisahkan tombol "Browse files" ke baris bawah agar tidak menumpuk */
     [data-testid="stFileUploader"] button {
-        margin-top: 8px !important;
-        display: inline-block !important;
+        margin-top: 4px !important;
     }
+
 
 
     
