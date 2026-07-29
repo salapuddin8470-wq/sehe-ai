@@ -33,7 +33,11 @@ st.markdown("""
     
     /* Import Font Premium */
     @import url('https://googleapis.com');
-    * { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+    
+    /* PERBAIKAN FONT GLOBAL: Mengecualikan ikon bawaan Streamlit agar tidak merusak & menindih teks */
+    *:not(ul):not(li):not(html):not(style):not(script):not(svg):not(path):not(g):not(i):not([class*="icon"]):not([class*="icon"] *) { 
+        font-family: 'Plus Jakarta Sans', sans-serif !important; 
+    }
     
     /* Latar Belakang Gradasi Laut Dalam */
     .stApp {
@@ -90,7 +94,7 @@ st.markdown("""
         background: transparent !important;
     }
     
-    /* KOTAK UNGGAH FILE KACA BENING */
+    /* KOTAK UNGGAH FILE KACA BENING (PERBAIKAN TOTAL TERTINDIH) */
     [data-testid="stFileUploader"] {
         background: rgba(255, 255, 255, 0.02) !important;
         backdrop-filter: blur(12px) !important;
@@ -105,9 +109,17 @@ st.markdown("""
         background: rgba(3, 169, 244, 0.04) !important;
         box-shadow: 0 0 25px rgba(3, 169, 244, 0.2) !important;
     }
+    /* Mengunci jarak aman teks petunjuk agar sejajar rapi */
     [data-testid="stFileUploader"] section div, [data-testid="stFileUploader"] text, [data-testid="stFileUploader"] span {
-        color: #ffffff !important; font-weight: 500 !important;
+        color: #ffffff !important; 
+        font-weight: 500 !important;
+        line-height: 1.6 !important;
     }
+    /* Memaksa tombol "Browse files" turun dan terpisah dari ikon */
+    [data-testid="stFileUploader"] button {
+        margin-top: 12px !important;
+    }
+
     
     /* TOMBOL CETAK & SIMPAN GRADASI BERKILAU */
     .action-buttons-container { display: flex; gap: 16px; margin-top: 20px; margin-bottom: 12px; }
