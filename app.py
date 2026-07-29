@@ -123,15 +123,20 @@ st.markdown("""
         box-shadow: 0 0 25px rgba(3, 169, 244, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.4) !important;
     }
     
-    /* Mengamankan seluruh teks instruksi di dalam kotak agar menyala putih bersih */
-    [data-testid="stFileUploaderDropzone"] div,
-    [data-testid="stFileUploader"] section div, 
-    [data-testid="stFileUploader"] text, 
-    [data-testid="stFileUploader"] span {
-        color: #ffffff !important; 
-        font-weight: 500 !important;
-        line-height: 1.5 !important;
+    /* Menyembunyikan total teks batas info ukuran bawaan Streamlit (200MB per file) */
+    [data-testid="stFileUploaderRequirements"], 
+    [data-testid="stFileUploader"] small,
+    [data-testid="stFileUploader"] section + div {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0px !important;
+        font-size: 0px !important;
+        line-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
+
 
  /* Menyembunyikan teks info ukuran file bawaan Streamlit (200MB per file) */
     [data-testid="stFileUploaderRequirements"] {
