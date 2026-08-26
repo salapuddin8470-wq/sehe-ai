@@ -491,8 +491,8 @@ if final_prompt:
         # 3. Failover API Key & Eksekusi Gemini Model
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
-            # Menggunakan gemini-3.6-flash sesuai rekomendasi resmi server Google API
-            daftar_model = ['gemini-3.6-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']
+            # Menggunakan daftar model resmi Google GenAI SDK
+            daftar_model = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']
             
             for target_model in daftar_model:
                 try:
@@ -518,21 +518,20 @@ if final_prompt:
                         if response and hasattr(response, 'text'):
                             ai_response = response.text
                             sukses_merespons = True
-                            break 
+                            break # Berhasil! Keluar dari loop model
                 except Exception as e:
                     last_error_msg = str(e)
+                    # Jika kuota habis, beri jeda dan coba kunci API berikutnya
                     if "429" in last_error_msg or "RESOURCE_EXHAUSTED" in last_error_msg:
                         import time
-                        time.sleep(2)
-                        break 
-                    elif "503" in last_error_msg:
-                        continue  
+                        time.sleep(1)
+                        break # Pindah ke kunci API (current_key) berikutnya
                     else:
-                        break
+                        # Jika model 404/503/Error lain, LANJUTKAN ke model cadangan berikutnya di dalam daftar_model
+                        continue
 
             if sukses_merespons:
                 break 
-
             
             if idx == len(api_keys) - 1 and not sukses_merespons:
                 st.error("⚠️ Seluruh jalur kunci dan model cadangan SeHe.AI sedang padat di server Google. Silakan tunggu 10 detik lalu kirim ulang pesan Anda.")
