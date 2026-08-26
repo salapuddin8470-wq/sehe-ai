@@ -491,18 +491,14 @@ if final_prompt:
         # 3. Failover API Key & Eksekusi Gemini Model
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
-
-        # Gunakan strip hyphen biasa (-) pada keyboard:
-        daftar_model = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']
-
-
+            daftar_model = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']
+            
             for target_model in daftar_model:
                 try:
                     with st.spinner(f"SeHe.AI membedah data ({target_model} | Jalur {idx+1}/{len(api_keys)})..."):
                         temp_client = genai.Client(api_key=current_key)
                         
                         riwayat_gemini = []
-                        # Ambil 2 pesan terakhir untuk kontekstual obrolan
                         for msg in st.session_state.messages[-3:-1]:
                             riwayat_gemini.append(
                                 types.Content(
@@ -535,6 +531,7 @@ if final_prompt:
 
             if sukses_merespons:
                 break 
+
             
             if idx == len(api_keys) - 1 and not sukses_merespons:
                 st.error("⚠️ Seluruh jalur kunci dan model cadangan SeHe.AI sedang padat di server Google. Silakan tunggu 10 detik lalu kirim ulang pesan Anda.")
