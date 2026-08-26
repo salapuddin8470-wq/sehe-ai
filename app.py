@@ -140,7 +140,7 @@ st.markdown("""
     }
 
 
- /* Menyembunyikan teks info ukuran file bawaan Streamlit (200MB per file) */
+    /* Menyembunyikan teks info ukuran file bawaan Streamlit (200MB per file) */
     [data-testid="stFileUploaderRequirements"] {
         display: none !important;
         visibility: hidden !important;
