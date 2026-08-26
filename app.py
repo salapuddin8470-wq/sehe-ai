@@ -300,17 +300,213 @@ st.markdown(r"""
     }
     .btn-blue {
         background: linear-gradient(135deg, #0288d1 0%, #005691 100%) !important; color: #ffffff !important;
-        box-shadow: 0 4px 15px rgba(2, 136, 209, 0.3) !important;
+Import streamlit as st
+from google import genai
+from google.genai import types
+import os
+from docx import Document
+import io
+import base64
+
+# =====================================================================
+# 1. KONFIGURASI TAMPILAN TAB BROWSER & CUSTOM CSS PREMIUM (ANTI SAMAR)
+# =====================================================================
+st.set_page_config(page_title="SeHe.AI - Asisten Cerdas Nelayan", page_icon="🐟", layout="centered")
+
+st.markdown("""
+<style>
+    /* ELEMEN MINIMALIS: MENYEMBUNYIKAN HEADER, GITHUB, & DEKORASI */
+    header {visibility: hidden !important; height: 0px !important;}
+    footer {visibility: hidden !important;}
+    .viewerBadge_link__1S137 {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    
+    /* MENYEMBUNYIKAN IKON BAWAAN STREAMLIT DI HP */
+    [data-testid="stViewerBadge"], .viewerBadge_container__1S137, a[href*="streamlit.io"] {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important; width: 0px !important;
     }
-    .btn-green {
-        background: linear-gradient(135deg, #15803d 0%, #166534 100%) !important; color: #ffffff !important;
-        box-shadow: 0 4px 15px rgba(22, 101, 52, 0.3) !important;
+    [data-testid="stConnectionStatus"], .stConnectionStatus, div[class*="stConnectionStatus"] {
+        display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0px !important;
+    }
+    
+    .block-container {
+        padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; max-width: 1000px !important; position: relative; z-index: 2;
+    }
+    
+    /* Import Font Premium */
+    @import url('https://googleapis.com');
+    
+    /* PERBAIKAN FONT GLOBAL: Mengecualikan ikon bawaan Streamlit agar tidak merusak & menindih teks */
+    *:not(ul):not(li):not(html):not(style):not(script):not(svg):not(path):not(g):not(i):not([class*="icon"]):not([class*="icon"] *) { 
+        font-family: 'Plus Jakarta Sans', sans-serif !important; 
+    }
+    
+    /* Latar Belakang Gradasi Laut Dalam */
+    .stApp {
+        background: linear-gradient(135deg, #020617 0%, #071e3d 50%, #032d56 100%) !important; 
+        background-attachment: fixed !important; 
+        overflow-x: hidden;
+    }
+    
+    /* Memaksa Semua Teks Berwarna Putih Terang */
+    .stApp p, .stApp li, .stApp span:not(.btn-action), .stApp h1, .stApp h2, .stApp h3, .stApp h4 {
+        color: #ffffff !important;
+    }
+    
+    /* Sidebar Semi-Transparan */
+    [data-testid="stSidebar"] {
+        background: rgba(2, 6, 23, 0.85) !important; 
+        backdrop-filter: blur(20px) !important; 
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important; 
+        z-index: 3;
+    }
+    
+    /* GELEMBUNG CHAT GLASSMORPHISM MEWAH */
+    .stChatMessage, [data-testid="stChatMessage"] {
+        background: rgba(255, 255, 255, 0.04) !important; 
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 16px !important;
+        margin-bottom: 16px !important;
+        padding: 20px !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+        transition: all 0.3s ease;
+    }
+    .stChatMessage:hover {
+        border-color: rgba(3, 169, 244, 0.3) !important;
+        box-shadow: 0 8px 32px 0 rgba(3, 169, 244, 0.1) !important;
+    }
+    [data-testid="stChatMessageContent"] { color: #ffffff !important; font-size: 15px !important; line-height: 1.6 !important; }
+    [data-testid="stChatMessageContent"] div, [data-testid="stChatMessageContent"] span { background-color: transparent !important; }
+    
+    /* WADAH INPUT CHAT ELEGAN */
+    [data-testid="stChatInput"] {
+        border-radius: 16px !important; 
+        border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+        background: rgba(255, 255, 255, 0.06) !important; 
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.2) !important;
+        padding: 4px !important;
+    }
+    /* PERBAIKAN TOTAL: Memaksa teks ketikan kita agar berwarna gelap terang di dalam kotak input */
+    [data-testid="stChatInput"] textarea { 
+        color: #0f172a !important; /* Warna gelap arang pekat agar tulisan kontras dan jelas */
+        font-weight: 500 !important; 
+        background: #ffffff !important; /* Memaksa latar belakang tempat mengetik tetap putih bersih */
     }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
+    
+    /* 1. KOTAK LUAR UNGGAH FILE (TRANSISI LUAR) */
+    [data-testid="stFileUploader"] {
+        background: transparent !important;
+        border: none !important;
+        padding: 0px !important;
+        margin-bottom: 25px !important;
+    }
+    
+    /* 2. KOTAK DALAM DI DALAM GARIS PUTUS-PUTUS (PERBAIKAN TOTAL ANTI PUTIH NEON) */
+    [data-testid="stFileUploaderDropzone"], [data-testid="stFileUploader"] section {
+        /* Mengubah latar kotak dalam dari putih neon menjadi biru laut sangat gelap */
+        background: rgba(2, 14, 30, 0.75) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        /* Mewarnai ulang garis putus-putus pembatas kotak */
+        border: 2px dashed rgba(3, 169, 244, 0.25) !important;
+        border-radius: 20px !important;
+        padding: 24px !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6) !important;
+    }
+    
+    /* Efek menyala redup yang mewah saat kursor menyentuh kotak dalam */
+    [data-testid="stFileUploaderDropzone"]:hover, [data-testid="stFileUploader"] section:hover {
+        border-color: rgba(3, 169, 244, 0.6) !important;
+        background: rgba(3, 169, 244, 0.05) !important;
+        box-shadow: 0 0 25px rgba(3, 169, 244, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    /* Menyembunyikan total teks batas info ukuran bawaan Streamlit (200MB per file) */
+    [data-testid="stFileUploaderRequirements"], 
+    [data-testid="stFileUploader"] small,
+    [data-testid="stFileUploader"] section + div {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0px !important;
+        font-size: 0px !important;
+        line-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+ /* Menyembunyikan teks info ukuran file bawaan Streamlit (200MB per file) */
+    [data-testid="stFileUploaderRequirements"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+    }
+
+    
+    /* Memisahkan tombol "Browse files" ke baris bawah agar tidak menumpuk */
+    [data-testid="stFileUploader"] button {
+        margin-top: 4px !important;
+    }
+
+       
+    /* TOMBOL CETAK & SIMPAN GRADASI BERKILAU */
+    .action-buttons-container { display: flex; gap: 16px; margin-top: 20px; margin-bottom: 12px; }
+    .btn-action {
+        padding: 14px 28px; border-radius: 14px; font-size: 14px; font-weight: 600;
+        text-decoration: none; border: none; cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-blue {
+        background: linear-gradient(135deg, #0288d1 0%, #005691 100%) !important; color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 4px 20px rgba(2, 136, 209, 0.25) !important;
+    }
+    .btn-blue:hover { 
+        background: linear-gradient(135deg, #039be5 0%, #0288d1 100%) !important;
+        transform: translateY(-3px); box-shadow: 0 8px 25px rgba(3, 155, 229, 0.45) !important;
+    }
+    .btn-green {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important; color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 4px 20px rgba(46, 125, 50, 0.25) !important;
+    }
+    .btn-green:hover { 
+        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%) !important;
+        transform: translateY(-3px); box-shadow: 0 8px 25px rgba(56, 142, 60, 0.45) !important;
+    }
+    
+    /* MODIFIKASI TOMBOL REKOMENDASI PINTASAN STREAMLIT (BAGIAN #8) */
+    div[data-testid="stColumn"] button {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border-radius: 14px !important;
+        padding: 14px 20px !important;
+        font-weight: 500 !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    }
+    div[data-testid="stColumn"] button:hover {
+        background: linear-gradient(135deg, #0288d1 0%, #005691 100%) !important;
+        border-color: #03a9f4 !important;
+        box-shadow: 0 6px 20px rgba(3, 169, 244, 0.35) !important;
+        transform: translateY(-3px) !important;
+    }
+    div[data-testid="stColumn"] button:active {
+        transform: translateY(-1px) !important;
+    }
+
+    /* Scrollbar Halus Khas Aplikasi Web Premium */
+    ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.25); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(3, 169, 244, 0.45); }
 </style>
 """, unsafe_allow_html=True)
 # =====================================================================
