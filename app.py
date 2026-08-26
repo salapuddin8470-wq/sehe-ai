@@ -491,9 +491,11 @@ if final_prompt:
         # 3. Failover API Key & Eksekusi Gemini Model
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
-            # Menggunakan nama model stabil produksi resmi Google GenAI SDK
-            daftar_model = ['gemini-1.5-flash', 'gemini-1.5-pro']
-            
+
+        # Gunakan strip hyphen biasa (-) pada keyboard:
+        daftar_model = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']
+
+
             for target_model in daftar_model:
                 try:
                     with st.spinner(f"SeHe.AI membedah data ({target_model} | Jalur {idx+1}/{len(api_keys)})..."):
