@@ -491,7 +491,8 @@ if final_prompt:
         # 3. Failover API Key & Eksekusi Gemini Model
         for idx, current_key in enumerate(api_keys):
             sukses_merespons = False
-            daftar_model = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']
+            # Menggunakan gemini-3.6-flash sesuai rekomendasi resmi server Google API
+            daftar_model = ['gemini-3.6-flash', 'gemini-1.5-flash', 'gemini-1.5-pro']
             
             for target_model in daftar_model:
                 try:
