@@ -48,63 +48,123 @@ st.markdown("""
         background-color: #ffffff !important;
         font-weight: 500 !important;
     }
-    
-    /* WARNA TEKS PLACEHOLDER ("Tanya sesuatu...") */
-    div[data-testid="stChatInput"] input::placeholder,
-    div[data-testid="stChatInput"] textarea::placeholder {
-        color: #444444 !important;
-        -webkit-text-fill-color: #444444 !important;
+st.markdown("""
+<style>
+    /* ==========================================
+       1. TEMA UTAMA: DARK EXECUTIVE MARITIME
+       ========================================== */
+    .stApp {
+        background: linear-gradient(180deg, #021526 0%, #032541 50%, #011222 100%) !important;
+        color: #f1f5f9 !important;
     }
 
-    /* 3. UNGGAH FILE DROPZONE */
-    [data-testid="stFileUploaderDropzone"]:hover, [data-testid="stFileUploader"] section:hover {
-        border-color: rgba(3, 169, 244, 0.6) !important;
-        background: rgba(3, 169, 244, 0.05) !important;
-        box-shadow: 0 0 25px rgba(3, 169, 244, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.4) !important;
+    /* Memaksa Judul & Teks Utama Menjadi Cerah Elegan */
+    h1, h2, h3, h4, h5, h6, p, label, span {
+        color: #f1f5f9 !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    }
+
+    /* ==========================================
+       2. TOMBOL PINTASAN MEWAH (GLASSMORPHISM)
+       ========================================== */
+    div[data-testid="stColumn"] button,
+    div[data-testid="stColumn"] button:enabled,
+    div[data-testid="stColumn"] button:focus {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+        border: 1px solid rgba(3, 169, 244, 0.3) !important;
+        border-radius: 14px !important;
+        padding: 16px 20px !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+        backdrop-filter: blur(10px) !important;
+        transition: all 0.3s ease-in-out !important;
+    }
+
+    /* Paksa Teks & Emoji Dalam Tombol Terlihat Putih Menyala */
+    div[data-testid="stColumn"] button p,
+    div[data-testid="stColumn"] button div,
+    div[data-testid="stColumn"] button span {
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+    }
+
+    /* Efek Hover Tombol (Gradasi Biru Emas) */
+    div[data-testid="stColumn"] button:hover {
+        background: linear-gradient(135deg, #0288d1 0%, #004d80 100%) !important;
+        border-color: #38bdf8 !important;
+        box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4) !important;
+        transform: translateY(-3px) !important;
+    }
+
+    /* ==========================================
+       3. KOTAK UNGGAH FILE (DROPZONE ELEGAN)
+       ========================================== */
+    [data-testid="stFileUploader"] {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px dashed rgba(56, 189, 248, 0.4) !important;
+        border-radius: 16px !important;
+        padding: 10px !important;
     }
     
+    [data-testid="stFileUploader"] section {
+        background: transparent !important;
+    }
+
     [data-testid="stFileUploaderRequirements"], 
     [data-testid="stFileUploader"] small {
         display: none !important;
-        visibility: hidden !important;
-        height: 0px !important;
     }
-    
-    [data-testid="stFileUploader"] button {
-        margin-top: 4px !important;
+
+    /* ==========================================
+       4. CHAT INPUT: TEKS HITAM KONTRAS & JELAS
+       ========================================== */
+    div[data-testid="stChatInput"] {
+        background: transparent !important;
+        border-radius: 16px !important;
     }
-       
-    /* 4. TOMBOL CETAK & SIMPAN WORD/HTML */
-    .action-buttons-container { display: flex; gap: 16px; margin-top: 20px; margin-bottom: 12px; }
+
+    div[data-testid="stChatInput"] textarea,
+    div[data-testid="stChatInput"] input {
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        background-color: #ffffff !important;
+        font-weight: 600 !important;
+        border-radius: 12px !important;
+    }
+
+    div[data-testid="stChatInput"] textarea::placeholder,
+    div[data-testid="stChatInput"] input::placeholder {
+        color: #64748b !important;
+        -webkit-text-fill-color: #64748b !important;
+    }
+
+    /* ==========================================
+       5. TOMBOL SIMPAN DOKUMEN (.WORD & .HTML)
+       ========================================== */
+    .action-buttons-container { display: flex; gap: 16px; margin-top: 20px; }
     .btn-action {
-        padding: 14px 28px; border-radius: 14px; font-size: 14px; font-weight: 600;
+        padding: 12px 24px; border-radius: 12px; font-size: 13px; font-weight: 600;
         text-decoration: none; border: none; cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        transition: all 0.3s ease;
     }
     .btn-blue {
         background: linear-gradient(135deg, #0288d1 0%, #005691 100%) !important; color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 4px 20px rgba(2, 136, 209, 0.25) !important;
-    }
-    .btn-blue:hover { 
-        background: linear-gradient(135deg, #039be5 0%, #0288d1 100%) !important;
-        transform: translateY(-3px); box-shadow: 0 8px 25px rgba(3, 155, 229, 0.45) !important;
+        box-shadow: 0 4px 15px rgba(2, 136, 209, 0.3) !important;
     }
     .btn-green {
-        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%) !important; color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important; box-shadow: 0 4px 20px rgba(46, 125, 50, 0.25) !important;
-    }
-    .btn-green:hover { 
-        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%) !important;
-        transform: translateY(-3px); box-shadow: 0 8px 25px rgba(56, 142, 60, 0.45) !important;
+        background: linear-gradient(135deg, #15803d 0%, #166534 100%) !important; color: #ffffff !important;
+        box-shadow: 0 4px 15px rgba(22, 101, 52, 0.3) !important;
     }
 
-    /* Scrollbar Halus */
-    ::-webkit-scrollbar { width: 8px; }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(3, 169, 244, 0.25); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(3, 169, 244, 0.45); }
+    ::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 10px; }
 </style>
+""", unsafe_allow_html=True)
+
     [data-testid="stFileUploaderDropzone"]:hover, [data-testid="stFileUploader"] section:hover {
         border-color: rgba(3, 169, 244, 0.6) !important;
         background: rgba(3, 169, 244, 0.05) !important;
