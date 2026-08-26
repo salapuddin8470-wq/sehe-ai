@@ -127,6 +127,22 @@ st.markdown("""
     }
     
     [data-testid="stFileUploader"] button {
+<style>
+    [data-testid="stFileUploaderDropzone"]:hover, [data-testid="stFileUploader"] section:hover {
+        border-color: rgba(3, 169, 244, 0.6) !important;
+        background: rgba(3, 169, 244, 0.05) !important;
+        box-shadow: 0 0 25px rgba(3, 169, 244, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    /* Menyembunyikan info persyaratan file bawaan */
+    [data-testid="stFileUploaderRequirements"], 
+    [data-testid="stFileUploader"] small {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+    }
+    
+    [data-testid="stFileUploader"] button {
         margin-top: 4px !important;
     }
        
@@ -171,6 +187,21 @@ st.markdown("""
         border-color: #03a9f4 !important;
         box-shadow: 0 6px 20px rgba(3, 169, 244, 0.35) !important;
         transform: translateY(-3px) !important;
+    }
+
+    /* UBAH WARNA TEKS CHAT INPUT MENJADI HITAM PEKAT */
+    div[data-testid="stChatInput"] input, 
+    div[data-testid="stChatInput"] textarea {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        background-color: #ffffff !important;
+    }
+    
+    /* UBAH WARNA TEKS PLACEHOLDER (PETUNJUK KETIKAN) */
+    div[data-testid="stChatInput"] input::placeholder,
+    div[data-testid="stChatInput"] textarea::placeholder {
+        color: #555555 !important;
+        -webkit-text-fill-color: #555555 !important;
     }
 
     /* Scrollbar Halus */
